@@ -12,12 +12,12 @@ object World {
     }
 
     fun getLevel(): Array<Array<Tile>> {
-        Level.data = data[data.lastIndex]
-        return data[data.lastIndex]
+        Level.set( data[data.lastIndex])
+        return Level.get()
     }
 
-    fun addLevel(level: Level) {
-        data.add(Level.get(30+data.lastIndex+5))
+    fun addLevel() {
+        data.add(Level.getNew(5+data.lastIndex+5))
     }
 
     fun loadSaved(seed: String) { //Загрузка сохраненного мира и

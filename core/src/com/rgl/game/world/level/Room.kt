@@ -10,16 +10,18 @@ object Room {
     private var direction: Int = 0
     private var amountOfDoors: Int = 0
     private var pointer: Int = 0
-    private var src: Array<Array<Tile>> = Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 1) } }
+    private var src: Array<Array<Tile>> =
+        Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0)) } }
+
     fun getNext(): Array<Array<Tile>> {
         getNextRandom()
-        src = Array(width) { Array(height) { Tile(Vector2(1.0f, 1.0f), 1) } }
+        src = Array(width) { Array(height) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0)) } }
         fill()
         return src
     }
 
     fun print() {
-        var pp: Array<Array<Tile>> = getNext()
+        val pp: Array<Array<Tile>> = getNext()
         for (it in pp) {
             for (it1 in it) {
                 System.out.print(it1.textureID)

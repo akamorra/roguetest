@@ -3,33 +3,29 @@ package com.rgl.game.world.level
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 
-//Level - Singleton класс для хранения данных и отрисовки текущего уровня
+//Level - Singleton класс для хранения,обработки данных и отрисовки текущего уровня
 object Level {
-    //private var font:BitmapFont=BitmapFont()
-    private var renderPos: Vector2 = Vector2(0.0f, 0.0f)
-    private var pointer: Int = 0
+    //private var font: BitmapFont =BitmapFont()
+
     private var objectsManager: ObjectsManager = ObjectsManager()
 
-    var data: Array<Array<Tile>> = Array(100) { Array(100) { Tile(Vector2(1.0f, 1.0f), 1) } }
+    private var data: Array<Array<Tile>> = Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 1,
+        Tile.Index(0,0)
+    ) } }
 
+    fun get(): Array<Array<Tile>> {return data}
+    fun set(src:Array<Array<Tile>>){
+        data=src
+    }
     fun render(batch: Batch) {
-        renderPos.x = 0.0f
-        renderPos.y = 0.0f
-        pointer = 0
-        for (it in data) {
-            for (it1 in it) {
-                renderPos.x -= Tile.TILESIZE / 2
-                renderPos.y -= (Tile.TILESIZE / 2 - Tile.TILESIZE / 8)
-                it1.render(batch, renderPos.x, renderPos.y)
-                it1.pos = Vector2(renderPos.x, renderPos.y)
-                //font.draw(batch, renderPos.toString(), renderPos.x+86, renderPos.y+180);
+        for(it in data){
+            for (it1 in it){
+                it1.render(batch,it1.renderPos.x,it1.renderPos.y)
+                //if(it1.textureID.toInt() !=0)font.draw(batch, it1.renderPos.toString()+"\n"+it1.index.x+":"+it1.index.y, it1.renderPos.x+86, it1.renderPos.y+180)
             }
-            pointer++
-            renderPos.y = 0 - pointer * (Tile.TILESIZE / 2 - Tile.TILESIZE / 8)
-            renderPos.x = 0 + pointer * Tile.TILESIZE / 2
         }
     }
-    fun get(rooms:Int):Array<Array<Tile>>{
+    fun getNew(rooms:Int):Array<Array<Tile>>{
         data=DungeonLevel.getDungeonLevel(rooms)
         return data
     }

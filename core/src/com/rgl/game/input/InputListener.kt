@@ -7,7 +7,10 @@ import kotlin.math.round
 
 class InputListener(camera: OrthographicCamera) : GestureListener {
     val cam = camera
-
+    companion object {
+        private const val maxZoom = 20.0f
+        private const val minZoom = 1.0f
+    }
     override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean {
         return false
     }
@@ -35,17 +38,15 @@ class InputListener(camera: OrthographicCamera) : GestureListener {
     }
 
     override fun zoom(initialDistance: Float, distance: Float): Boolean {
-        if (cam.zoom <= 8.0f && initialDistance < distance && cam.zoom > 1.0f) {
+        if (cam.zoom <= maxZoom && initialDistance < distance && cam.zoom > minZoom) {
             cam.zoom -= (distance - initialDistance) / 10000
             cam.update()
-            System.out.println(cam.zoom)
         }
-        if (cam.zoom >= 1.0f && initialDistance > distance && cam.zoom <= 8.0f) {
+        if (cam.zoom >= minZoom && initialDistance > distance && cam.zoom <= maxZoom) {
             cam.zoom += (initialDistance - distance) / 10000
             cam.update()
-            System.out.println(cam.zoom)
         }
-        if (cam.zoom > 8.0f || cam.zoom < 1.0f) {
+        if (cam.zoom > maxZoom || cam.zoom < minZoom) {
             cam.zoom = round(cam.zoom)
             cam.update()
         }

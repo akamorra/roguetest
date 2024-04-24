@@ -4,14 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.rgl.game.graphics.TextureRepo;
 import com.rgl.game.input.InputListener;
 import com.rgl.game.world.level.Level;
 import com.rgl.game.world.World;
-import com.rgl.game.world.level.LevelGenerator;
-import com.rgl.game.world.level.Room;
 import com.rgl.game.world.level.Tile;
 
 
@@ -32,7 +29,7 @@ public class Main extends ApplicationAdapter {
 		viewportWidth=1920;
 		viewportHeight=1080;
 		camera.setToOrtho(false,viewportWidth,viewportHeight);
-		LevelGenerator.INSTANCE.generate();
+		World.INSTANCE.addLevel();
 		currentLevel = World.INSTANCE.getLevel();
 		Gdx.input.setInputProcessor(new GestureDetector(inputListener));
 
