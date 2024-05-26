@@ -1,5 +1,5 @@
 package com.rgl.game.world.game_objects
 
 interface Inspectable {
-    fun showHint()
+    fun checkCollision()
 }

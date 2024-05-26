@@ -12,18 +12,19 @@ object World {
     }
 
     fun getLevel(): Array<Array<Tile>> {
-        Level.set( data[data.lastIndex])
+        Level.set(data[data.lastIndex])
         return Level.get()
     }
 
     fun addLevel() {
-        data.add(Level.getNew(5+data.lastIndex+5))
+        data.add(Level.getNew(5 + data.lastIndex + 5))
     }
 
     fun loadSaved(seed: String) { //Загрузка сохраненного мира и
 
     }
-    fun clear(){
+
+    fun clear() {
         data.clear()
     }
 }

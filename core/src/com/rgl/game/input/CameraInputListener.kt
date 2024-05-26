@@ -5,7 +5,7 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.round
 
-class InputListener(camera: OrthographicCamera) : GestureListener {
+class CameraInputListener(camera: OrthographicCamera) : GestureListener {
     val cam = camera
     companion object {
         private const val maxZoom = 20.0f
