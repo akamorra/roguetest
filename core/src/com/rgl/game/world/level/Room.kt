@@ -8,7 +8,7 @@ import kotlin.random.Random
 data class Room(var width: Int, var height: Int) {
     private var listOfDoors: ArrayList<Tile.Index> = ArrayList<Tile.Index>()
     private var center: Vector2 = Vector2(0.0f, 0.0f)
-    private var centerIndex:Tile.Index=Tile.Index(0,0)
+    private var centerIndex: Tile.Index = Tile.Index(0, 0)
     private var amountOfDoors: Int = 0
     private var src: Array<Array<Tile>> =
         Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0), false) } }
@@ -72,28 +72,29 @@ data class Room(var width: Int, var height: Int) {
 
     fun setCenter() {
         if ((src.lastIndex + 1) % 2 > 0) {
-            centerIndex.x=src[(src.lastIndex)/2-1][0].index.x
+            centerIndex.x = src[(src.lastIndex) / 2 - 1][0].index.x
         } else {
-            centerIndex.x=src[(src.lastIndex)/2][0].index.x
+            centerIndex.x = src[(src.lastIndex) / 2][0].index.x
         }
         if ((src[0].lastIndex + 1) % 2 > 0) {
-            centerIndex.y=src[0][(src[0].lastIndex)/2-1].index.y
+            centerIndex.y = src[0][(src[0].lastIndex) / 2 - 1].index.y
         } else {
-            centerIndex.y=src[0][(src[0].lastIndex)/2].index.y
+            centerIndex.y = src[0][(src[0].lastIndex) / 2].index.y
         }
-        center.x=getFromIndex(centerIndex).renderPos.x+MapCFG.TILESIZE/2
-        center.y=getFromIndex(centerIndex).renderPos.y+MapCFG.TILESIZE/2-28
+        center.x = getFromIndex(centerIndex).renderPos.x + MapCFG.TILESIZE / 2
+        center.y = getFromIndex(centerIndex).renderPos.y + MapCFG.TILESIZE / 2 - 28
     }
 
-    fun getFromIndex(index:Tile.Index):Tile {
-        for (it in src){
-            for (it1 in it){
-                if ((index.x==it1.index.x)&&(index.y==it1.index.y))
+    fun getFromIndex(index: Tile.Index): Tile {
+        for (it in src) {
+            for (it1 in it) {
+                if ((index.x == it1.index.x) && (index.y == it1.index.y))
                     return it1
             }
         }
         return src[0][0]
     }
+
     fun makeConnection(room: Room) {
         /*
         if (!listOfConnections.contains(room)) {

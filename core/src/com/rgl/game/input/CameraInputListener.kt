@@ -6,11 +6,13 @@ import com.badlogic.gdx.math.Vector2
 import kotlin.math.round
 
 class CameraInputListener(camera: OrthographicCamera) : GestureListener {
-    val cam = camera
+    private val cam = camera
+
     companion object {
         private const val maxZoom = 20.0f
         private const val minZoom = 1.0f
     }
+
     override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean {
         return false
     }

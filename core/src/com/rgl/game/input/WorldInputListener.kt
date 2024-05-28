@@ -36,9 +36,10 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch)
                     ) / (MapCFG.TILESIZE / 2).pow(2) < 1
                 ) {
                     if (it1.isInspectable()) {
-                        System.out.println(it1.toString())
-                        GuiInspect.show("ObjectHash:"+it1.hashCode(),it1.index.toString(),it1.toString(),
-                            TextureRepo.getTexture(Textures.EMPTY_TEXTURE.id))
+                        GuiInspect.show(
+                            "ObjectHash:" + it1.hashCode(), it1.index.toString(), it1.toString(),
+                            TextureRepo.getTexture(Textures.EMPTY_TEXTURE.id)
+                        )
                         return false
                     } else {
                         GuiInspect.hide()

@@ -13,7 +13,7 @@ class Tile(
     class Index(var x: Int, var y: Int) {
         @Override
         override fun toString(): String {
-            return "(" + x + ";" + y + ")"
+            return "($x;$y)"
         }
     }
 

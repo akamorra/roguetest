@@ -34,14 +34,16 @@ object DungeonLevel {
     }
 
     private fun addToGraph() {
-        for (i in 0..listOfRooms.size-1) graph.add(i.toString(), listOfRooms[i])
-        graph.get().forEach { entry -> System.out.println(entry.toString()+"\n") }
+        for (i in 0..listOfRooms.size - 1) graph.add(i.toString(), listOfRooms[i])
+        graph.get().forEach { entry -> System.out.println(entry.toString() + "\n") }
     }
-    fun prepare(){
+
+    fun prepare() {
         graph.get().forEach { entry ->
-            entry.value.color= Color(Color.RED)
+            entry.value.color = Color(Color.RED)
         }
     }
+
     fun render(batch: ShapeRenderer) {
         graph.get().forEach { entry ->
             for (it in graph.neighbors(entry.key)) {
@@ -68,9 +70,11 @@ object DungeonLevel {
             }
         }
     }
-    private fun print(){
-        for(it in listOfRooms)System.out.println(it.toString())
+
+    private fun print() {
+        for (it in listOfRooms) System.out.println(it.toString())
     }
+
     private fun addRooms(rooms: Int) {
         amountOfRooms = Random.nextInt(rooms) + rooms
         for (it in 0..rooms) {
@@ -161,12 +165,6 @@ object DungeonLevel {
     }
 
     private fun makeConnections() {
-
         graph.check()
-        graph.get().forEach {
-            it.value.neighbors.forEach{ it1->
-                //it.value.room.makeConnection(it1.room)
-            }
-        }
     }
 }

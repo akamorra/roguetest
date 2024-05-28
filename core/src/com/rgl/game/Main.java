@@ -9,9 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.rgl.game.graphics.TextureRepo;
-import com.rgl.game.graphics.GuiName;
 import com.rgl.game.gui.GuiInspect;
 import com.rgl.game.input.CameraInputListener;
 import com.rgl.game.input.WorldInputListener;
@@ -37,13 +35,13 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        shapeBatch=new ShapeRenderer();
+        shapeBatch = new ShapeRenderer();
         shapeBatch.setAutoShapeType(true);
         shapeBatch.setColor(Color.RED);
         uibatch = new SpriteBatch();
         camera = new OrthographicCamera();
-        uicamera =new OrthographicCamera();
-        uicamera.setToOrtho(false,MapCFG.VIEWPORTWIDTH,MapCFG.VIEWPORTHEIGHT);
+        uicamera = new OrthographicCamera();
+        uicamera.setToOrtho(false, MapCFG.VIEWPORTWIDTH, MapCFG.VIEWPORTHEIGHT);
         cameraInputListener = new CameraInputListener(camera);
         worldInputListener = new WorldInputListener(camera, batch);
         camera.setToOrtho(false, MapCFG.VIEWPORTWIDTH, MapCFG.VIEWPORTHEIGHT);
@@ -59,12 +57,14 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
+        camera.zoom = 12;
+        camera.position.set(755.90f, -9303.10f, 0.0f);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         Level.INSTANCE.render(batch);
         batch.setProjectionMatrix(uicamera.combined);
-        GuiInspect.INSTANCE.render(batch,uicamera);
+        GuiInspect.INSTANCE.render(batch, uicamera);
         batch.end();
         shapeBatch.setProjectionMatrix(camera.combined);
         shapeBatch.begin();
