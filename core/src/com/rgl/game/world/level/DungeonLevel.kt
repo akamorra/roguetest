@@ -1,5 +1,7 @@
 package com.rgl.game.world.level
 
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.rgl.game.world.MapCFG
 import kotlin.random.Random
@@ -12,7 +14,10 @@ object DungeonLevel {
     private var data: Array<Array<Tile>> =
         Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 0, Tile.Index(0, 0), false) } }
     private var amountOfRooms: Int = 0
+    private var amountOfConnections: Int = 0
+    private var chance: Int = 1
     private var listOfRooms: ArrayList<Room> = ArrayList()
+    private var graph: Graph = Graph()
     private var spawned: Boolean = false
     private var breakFlag: Boolean = false
 
@@ -21,7 +26,29 @@ object DungeonLevel {
         addRooms(rooms)
         setIndexes()
         setRenderPoses()
+        setCenters()
+        addToGraph()
+        makeConnections()
+        prepare()
         return data
+    }
+
+    private fun addToGraph() {
+        for (i in 0..listOfRooms.size-1) graph.add(i.toString(), listOfRooms[i])
+        graph.get().forEach { entry -> System.out.println(entry.toString()+"\n") }
+    }
+    fun prepare(){
+        graph.get().forEach { entry ->
+            entry.value.color= Color(Color.RED)
+        }
+    }
+    fun render(batch: ShapeRenderer) {
+        graph.get().forEach { entry ->
+            for (it in graph.neighbors(entry.key)) {
+                batch.color = entry.value.color
+                batch.line(entry.value.room.getCenter(), it.room.getCenter())
+            }
+        }
     }
 
     private fun clearData() {
@@ -41,10 +68,12 @@ object DungeonLevel {
             }
         }
     }
-
+    private fun print(){
+        for(it in listOfRooms)System.out.println(it.toString())
+    }
     private fun addRooms(rooms: Int) {
         amountOfRooms = Random.nextInt(rooms) + rooms
-        for (it in 0..<rooms) {
+        for (it in 0..rooms) {
             listOfRooms.add(Room(6, 6))
         }
         for (it in listOfRooms) {
@@ -75,6 +104,7 @@ object DungeonLevel {
                 }
                 if (!breakFlag) spawned = true
             }
+
             for (i in 0..<it.getSrc().size) {
                 for (j in 0..<it.getSrc()[0].size) {
                     it.getSrc()[i][j].index.x = pointerX + i
@@ -121,8 +151,22 @@ object DungeonLevel {
                     it2.isDrawable = true
                 }
             }
-            it.print()
         }
     }
 
+    private fun setCenters() { //определение центров комнат
+        for (it in listOfRooms) {
+            it.setCenter()
+        }
+    }
+
+    private fun makeConnections() {
+
+        graph.check()
+        graph.get().forEach {
+            it.value.neighbors.forEach{ it1->
+                //it.value.room.makeConnection(it1.room)
+            }
+        }
+    }
 }
