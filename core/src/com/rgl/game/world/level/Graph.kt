@@ -11,7 +11,6 @@ class Graph {
         var neighbors = mutableSetOf<Vertex>()
         var clr = Random.nextInt(7) - 1
         var color: Color = Color()
-        var listOfClosests = mutableSetOf<Vertex>()
     }
 
     private val data = mutableMapOf<String, Vertex>()
@@ -43,11 +42,7 @@ class Graph {
     }
 
     fun neighbors(s: String) = data[s]?.neighbors?.map { it } ?: emptySet<Vertex>()
-    fun getNeighbors(s: String): Boolean {
-        return !data[s]?.neighbors.isNullOrEmpty()
-    }
 
-    fun isConnected(s1: String, s2: String) = neighbors(s1).contains(data[s2])
     fun deepFirstSearch(s1: String, visited: MutableSet<Vertex>): Boolean {
         if (data.contains(s1) && !visited.contains(data[s1])) {
             visited.add(data[s1]!!)
@@ -56,36 +51,6 @@ class Graph {
             }
         }
         return visited.size == data.count()
-    }
-
-    fun setClosests(v: Vertex, a: Int) {
-        var minKey = "0"
-        var min = 99999999.0f
-        if (!data.isNullOrEmpty()) {
-            while (v.listOfClosests.count() < a) {
-                data.forEach { entry ->
-                    var min2 = sqrt(
-                        (entry.value.room.getCenter().x - v.room.getCenter().x).pow(2) + (entry.value.room.getCenter().y - v.room.getCenter().y).pow(
-                            2
-                        )
-                    )
-                    if (!v.listOfClosests.contains(entry.value) && v != entry.value) {
-                        if (min2 < min) if (!v.listOfClosests.contains(data[entry.key])) {
-                            min = min2
-                            minKey = entry.key
-                        }
-                    }
-
-                }
-                if (!v.listOfClosests.contains(data[minKey]) && v != data[minKey] && v.s != minKey) {
-                    v.listOfClosests.add(data[minKey]!!)
-                    connect(v, data[minKey]!!)
-                }
-                min = 9999999.0f
-            }
-
-
-        }
     }
 
     fun check() {
