@@ -66,7 +66,7 @@ object TextureRepo {
             Textures.STONE1.id -> atlasRegion[0]
             Textures.STONE2.id -> atlasRegion[1]
             Textures.STONE3.id -> atlasRegion[2]
-            Textures.GRASS.id -> atlasRegion[0]
+            Textures.DOOR.id -> atlasRegion[0]
             Textures.STONEWALL.id -> atlasRegion[4]
             Textures.STONEWALL_TRANSPARENT_W.id -> atlasRegion[5]
             Textures.STONEWALL_TRANSPARENT_E.id -> atlasRegion[6]

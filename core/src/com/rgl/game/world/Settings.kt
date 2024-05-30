@@ -5,4 +5,10 @@ object MapCFG {
     const val MAPSIZE = 100
     const val VIEWPORTWIDTH = 1920
     const val VIEWPORTHEIGHT = 1080
+    const val ROOMSIZE=5
+    const val ROOMCOUNT=15
+    const val MULTIPLIER= (MAPSIZE/ROOMSIZE)/4.toInt()
+    const val ZOOM=20
+    const val MAXZOOM=101.0f
+    const val MINZOOM=1.0f
 }

@@ -6,28 +6,17 @@ import com.rgl.game.world.MapCFG
 import kotlin.random.Random
 
 data class Room(var width: Int, var height: Int) {
-    private var listOfDoors: ArrayList<Tile.Index> = ArrayList<Tile.Index>()
+    var listOfDoors: MutableSet<Tile.Index> = mutableSetOf()
     private var center: Vector2 = Vector2(0.0f, 0.0f)
     private var centerIndex: Tile.Index = Tile.Index(0, 0)
-    private var amountOfDoors: Int = 0
+    companion object{
+        val generator:Room=Room(1,1)
+    }
     private var src: Array<Array<Tile>> =
-        Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0), false) } }
+        Array(width) { Array(height) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0), false) } }
 
     fun getCenter(): Vector2 = center
 
-    init {
-        src = getNext()
-    }
-
-    fun getAmountOfConnections(): Int = listOfDoors.size
-
-    private fun getNext(): Array<Array<Tile>> {
-        getNextRandom()
-        src =
-            Array(width) { Array(height) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0), false) } }
-        fill()
-        return src
-    }
 
     fun getSrc() = src
 
@@ -40,12 +29,22 @@ data class Room(var width: Int, var height: Int) {
         }
     }
 
-    private fun getNextRandom() {
-        width = Random.nextInt(width) + 5
-        height = Random.nextInt(height) + 5
+    fun getNextRandom(w: Int,h: Int) : Room {
+        width = Random.nextInt(2, w) + w
+        height = Random.nextInt(2,h) + h
+        var temp:Room=Room(width,height)
+        temp.fill()
+        return temp
     }
+    fun fillW(){
 
-    private fun fill() {
+        if(Textures.listOfTransparents.contains(src[0][0].textureID)) src[0][0].textureID=Textures.STONEWALL_TRANSPARENT.id
+        if(Textures.listOfTransparents.contains(src[0][src[0].lastIndex].textureID)) src[0][src[0].lastIndex].textureID=Textures.STONEWALL_TRANSPARENT.id
+        if(Textures.listOfTransparents.contains(src[src.lastIndex][0].textureID)) src[src.lastIndex][0].textureID=Textures.STONEWALL_TRANSPARENT.id
+        if(Textures.listOfTransparents.contains(src[src.lastIndex][src[0].lastIndex].textureID)) src[src.lastIndex][src[0].lastIndex].textureID=Textures.STONEWALL_TRANSPARENT.id
+
+    }
+     private fun fill() {
         for (it in src) {
             for (it1 in it) {
                 it1.textureID = (Random.nextInt(3) + 1).toByte()
@@ -53,17 +52,20 @@ data class Room(var width: Int, var height: Int) {
             }
         }
         for (it in 0..<src.size) {
+            if(src[it][0].textureID!=Textures.DOOR.id)
             src[it][0].textureID = Textures.STONEWALL.id; src[it][0].isObstacle = true
         }
         for (it in 1..<src.size) {
+            if(src[it][src[0].lastIndex].textureID!=Textures.DOOR.id)
             src[it][src[0].lastIndex].textureID =
                 Textures.STONEWALL_TRANSPARENT_W.id; src[it][src[0].lastIndex].isObstacle = true
         }
         for (it in 0..<src[0].size) {
+            if(src[0][it].textureID !=Textures.DOOR.id)
             src[0][it].textureID = Textures.STONEWALL.id; src[0][it].isObstacle = true
         }
         for (it in 1..<src[0].size) {
-            src[src.lastIndex][it].textureID =
+            if(src[src.lastIndex][it].textureID!=Textures.DOOR.id)src[src.lastIndex][it].textureID =
                 Textures.STONEWALL_TRANSPARENT_E.id; src[src.lastIndex][it].isObstacle = true
         }
         src[src.lastIndex][src[0].lastIndex].textureID = Textures.STONEWALL_TRANSPARENT.id
@@ -72,12 +74,12 @@ data class Room(var width: Int, var height: Int) {
 
     fun setCenter() {
         if ((src.lastIndex + 1) % 2 > 0) {
-            centerIndex.x = src[(src.lastIndex) / 2 - 1][0].index.x
+            centerIndex.x = src[(src.lastIndex) / 2][0].index.x
         } else {
             centerIndex.x = src[(src.lastIndex) / 2][0].index.x
         }
         if ((src[0].lastIndex + 1) % 2 > 0) {
-            centerIndex.y = src[0][(src[0].lastIndex) / 2 - 1].index.y
+            centerIndex.y = src[0][(src[0].lastIndex) / 2].index.y
         } else {
             centerIndex.y = src[0][(src[0].lastIndex) / 2].index.y
         }
@@ -95,94 +97,124 @@ data class Room(var width: Int, var height: Int) {
         return src[0][0]
     }
 
-    fun makeConnection(room: Room) {
-        /*
-        if (!listOfConnections.contains(room)) {
-            var connectToCenter = room.getCenter()
-            var minusX: Boolean = true
-            var minusY: Boolean = true
-            var angle: Double = 0.0
-            minusX = center.x > connectToCenter.x
-            minusY = center.y > connectToCenter.y
-            if (!minusX) {
-                if (!minusY) angle =
-                    asin(sin(
-                        sqrt((connectToCenter.x).pow(2) + (center.y).pow(2)) / sqrt(
-                            (connectToCenter.x - center.x).pow(
-                                2
-                            ) + (connectToCenter.y - center.y).pow(2)
-                        )
-                    )).toDouble()
-                else -1* acos(cos(
-                    sqrt((connectToCenter.x).pow(2) + (center.y).pow(2)) / sqrt(
-                        (connectToCenter.x - center.x).pow(
-                            2
-                        ) + (connectToCenter.y - center.y).pow(2)
-                    )
-                ))
-            } else {
-                if (!minusY) angle = PI/2+ acos(cos(
-                    sqrt((connectToCenter.x).pow(2) + (center.y).pow(2)) / sqrt(
-                        (connectToCenter.x - center.x).pow(2) + (connectToCenter.y - center.y).pow(2)
-                    )
-                )).toDouble()
-                else -1*PI/2-1*acos(cos(
-                    sqrt((connectToCenter.x).pow(2) + (center.y).pow(2)) / sqrt(
-                        (connectToCenter.x - center.x).pow(
-                            2
-                        ) + (connectToCenter.y - center.y).pow(2)
-                    )
-                ))
+    fun getDoor(room:Room):Tile{
+        var connectToCenter = room.getCenter()
+        var minusX = center.x < connectToCenter.x
+        var minusY = center.y < connectToCenter.y
+        var direction: Int = 0
+        if (minusX && minusY) direction = 2
+        if (!minusX && minusY) direction = 1
+        if (!minusX && !minusY) direction = 3
+        if (minusX && !minusY) direction = 4
+        var door=src[0][0]
+        when (direction) {
+            1 -> {
+                for(i in 1..<src[0].size-1){
+                    if(src[0][i].textureID==Textures.DOOR.id)
+                        door= src[0][i]
+                }
             }
-            val ang = toDegrees(angle)
-            if ((ang >= 90) && (ang < 180)) direction = 2
-            if ((ang >= 0) && (ang < 90)) direction = 3
-            if ((ang >= -90) && (ang < 0)) direction = 4
-            if ((ang >= -180) && (ang <= -90)) direction = 1
 
-            amountOfDoors = 1
-            when (direction) {
-                1 -> {
-                    pointer = Random.nextInt(2, src.size - 2)
+            2 -> {
+                for(i in 1..<src.size-1){
+                    if(src[i][0].textureID==Textures.DOOR.id)
+                        door= src[i][0]
+                }
+            }
 
-                    src[pointer + 1][0].textureID = Textures.STONEWALL_TRANSPARENT.id
-                    src[pointer][0].textureID = Textures.GRASS.id
-                    src[pointer][0].isObstacle = false
+            3 -> {
+                for(i in 1..<src.size-1){
+                    if(src[i][src[0].lastIndex].textureID==Textures.DOOR.id)
+                        door= src[i][src[0].lastIndex]
+                }
+            }
+
+            4 -> {
+                for(i in 1..<src[0].size-1){
+                    if(src[src.lastIndex][i].textureID==Textures.DOOR.id)
+                        door= src[src.lastIndex][i]
+                }
+            }
+        }
+        return door
+    }
+    fun makeDoor(room: Room) {
+        var pointer: Int = 0
+        var connectToCenter = room.getCenter()
+        var minusX = center.x < connectToCenter.x
+        var minusY = center.y < connectToCenter.y
+        var direction: Int = 0
+        if (minusX && minusY) direction = 2
+        if (!minusX && minusY) direction = 1
+        if (!minusX && !minusY) direction = 3
+        if (minusX && !minusY) direction = 4
+        when (direction) {
+            1 -> {
+                var flag=false
+                for(i in 0..<src[0].size){
+                    flag=src[0][i].textureID==Textures.DOOR.id
+                    if (flag)break
+                }
+                if (!flag) {
+                    pointer = Random.nextInt(3, src[0].size - 2)
+                    src[0][pointer + 1].textureID = Textures.STONEWALL_TRANSPARENT.id
+                    src[0][pointer].isObstacle = false
+                    src[0][pointer].textureID = Textures.DOOR.id
+                    //
+                    listOfDoors.add(src[0][pointer].index)
                 }
 
-                2 -> {
-                    pointer = Random.nextInt(2, src[0].size - 2)
+            }
 
+            2 -> {
+                var flag=false
+                for(i in 0..<src.size){
+                    flag=src[i][0].textureID==Textures.DOOR.id
+                    if (flag)break
+                }
+                if (!flag) {
+                    pointer = Random.nextInt(3, src.size - 2)
+                    src[pointer + 1][0].textureID = Textures.STONEWALL_TRANSPARENT.id
+                    src[pointer][0].textureID = Textures.DOOR.id
+                    src[pointer][0].isObstacle = false
+                    //
+                    listOfDoors.add(src[pointer][0].index)
+                }
+            }
+
+            3 -> {
+                var flag=false
+                for(i in 0..<src.size){
+                    flag=src[i][src[0].lastIndex].textureID==Textures.DOOR.id
+                    if (flag)break
+                }
+                if (!flag) {
+                    pointer = Random.nextInt(1, src.size - 2)
+                    src[pointer - 1][src[0].lastIndex].textureID =
+                        Textures.STONEWALL_TRANSPARENT.id
+                    src[pointer][src[0].lastIndex].isObstacle = false
+                    src[pointer][src[0].lastIndex].textureID = Textures.DOOR.id
+                    listOfDoors.add(src[pointer][src[0].lastIndex].index)
+                }
+            }
+
+            4 -> {
+                var flag=false
+                for(i in 0..<src[0].size){
+                    flag=src[src.lastIndex][i].textureID==Textures.DOOR.id
+                    if (flag)break
+                }
+                if (!flag) {
+                    pointer = Random.nextInt(3, src[0].size - 2)
                     src[src.lastIndex][pointer + 1].textureID =
                         Textures.STONEWALL_TRANSPARENT.id
                     src[src.lastIndex][pointer - 1].textureID =
                         Textures.STONEWALL_TRANSPARENT.id
                     src[src.lastIndex][pointer].isObstacle = false
-                    src[src.lastIndex][pointer].textureID = Textures.GRASS.id
-                }
-
-                3 -> {
-                    pointer = Random.nextInt(2, src.size - 2)
-
-                    src[pointer - 1][src[0].lastIndex].textureID =
-                        Textures.STONEWALL_TRANSPARENT.id
-                    src[pointer][src[0].lastIndex].isObstacle = false
-                    src[pointer][src[0].lastIndex].textureID = Textures.GRASS.id
-
-                }
-
-                4 -> {
-                    pointer = Random.nextInt(2, src[0].size - 2)
-
-                    src[0][pointer + 1].textureID = Textures.STONEWALL_TRANSPARENT.id
-                    src[0][pointer].isObstacle = false
-                    src[0][pointer].textureID = Textures.GRASS.id
+                    src[src.lastIndex][pointer].textureID = Textures.DOOR.id
+                    listOfDoors.add(src[src.lastIndex][pointer].index)
                 }
             }
-            listOfConnections.add(room)
-            room.makeConnection(this)
         }
-
-         */
     }
 }

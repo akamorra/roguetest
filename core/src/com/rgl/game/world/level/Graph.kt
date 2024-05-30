@@ -11,7 +11,41 @@ class Graph {
         var neighbors = mutableSetOf<Vertex>()
         var clr = Random.nextInt(7) - 1
         var color: Color = Color()
+        var edgesList: MutableSet<edge> = mutableSetOf()
+        override fun toString(): String {
+            return "S=" + s + " "
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return hashCode() == other.hashCode()
+        }
+
+        override fun hashCode(): Int {
+            return s.hashCode()
+        }
+
+        class edge(var start: Vertex, var end: Vertex) {
+            override fun equals(other: Any?): Boolean {
+
+                return other.hashCode() == this.hashCode()
+            }
+
+            override fun hashCode(): Int {
+                return this.toString().toInt()
+            }
+
+            override fun toString(): String {
+                return start.s + end.s
+            }
+        }
     }
+
+    private val returnPaired: pairedBooleanMutableSet = pairedBooleanMutableSet(
+        true,
+        mutableSetOf()
+    )
+
+    class pairedBooleanMutableSet(var bool: Boolean, var set: MutableSet<Vertex>)
 
     private val data = mutableMapOf<String, Vertex>()
 
@@ -34,6 +68,8 @@ class Graph {
     private fun connect(v1: Vertex, v2: Vertex) {
         v1.neighbors.add(v2)
         v2.neighbors.add(v1)
+        v1.edgesList.add(Vertex.edge(v1, v2))
+        v2.edgesList.add(Vertex.edge(v1,v2))
     }
 
     @Suppress("SuspiciousIndentation")
@@ -43,63 +79,83 @@ class Graph {
 
     fun neighbors(s: String) = data[s]?.neighbors?.map { it } ?: emptySet<Vertex>()
 
-    fun deepFirstSearch(s1: String, visited: MutableSet<Vertex>): Boolean {
+    fun deepFirstSearch(s1: String, visited: MutableSet<Vertex>): pairedBooleanMutableSet {
         if (data.contains(s1) && !visited.contains(data[s1])) {
             visited.add(data[s1]!!)
             data[s1]!!.neighbors.forEach {
                 deepFirstSearch(it.s, visited)
             }
         }
-        return visited.size == data.count()
+        //System.out.println(visited.toString())
+        returnPaired.bool = visited.count() == data.count()
+        returnPaired.set = visited
+        return returnPaired
     }
 
     fun check() {
         var flag = true
-        data.forEach {
-            if (!deepFirstSearch(it.key, mutableSetOf())) {
-                connectToClosest(it.value)
-            }
-        }
-        data.forEach {
-            while (!deepFirstSearch(it.key, mutableSetOf())) {
-                if (it.value.neighbors.count() > 2) {
-                    break
-                } else {
-                    connectToClosest(it.value) && !deepFirstSearch(it.key, mutableSetOf())
+        while (flag) {
+           // run breaking@{
+                flag = false
+                data.forEach {
+
+                        if (it.value.neighbors.count() <= 2) {
+                            //System.out.println(it.key + "соседи:" + data[it.key]!!.neighbors.toString())
+                            if (!deepFirstSearch(it.key, mutableSetOf()).bool) {
+                                //System.out.println(returnPaired.bool.toString())
+                                /*data.forEach{ it2->
+                                if(!returnPaired.set.contains(it2.value)&&!flag){
+                                    connectToClosest(it2.value)
+                                    flag = true
+                                }
+                            }*/
+
+                                connectToClosest(returnPaired.set.last())
+                                flag = true
+                                if (flag) return@forEach
+                            }
+                        }
                 }
-            }
+                    //if (flag) return@breaking
+                //}
+
         }
+
     }
 
     private fun connectToClosest(v: Vertex): Boolean {
         if (!data.isNullOrEmpty()) {
             var min = 999999.0f
             var minKey = v.s
-            while (true) {
-                data.forEach { entry ->
-
-                    if (!v.neighbors.contains(entry.value) && v != entry.value) {
-                        var min2 = sqrt(
-                            (entry.value.room.getCenter().x - v.room.getCenter().x).pow(2) + (entry.value.room.getCenter().y - v.room.getCenter().y).pow(
-                                2
-                            )
+            var flag = true
+            data.forEach { entry ->
+                if (!v.neighbors.contains(entry.value) && v != entry.value) {
+                    var min2 = sqrt(
+                        (entry.value.room.getCenter().x - v.room.getCenter().x).pow(2) + (entry.value.room.getCenter().y - v.room.getCenter().y).pow(
+                            2
                         )
-                        if (min2 < min) if (!v.neighbors.contains(data[entry.key])) {
-                            min = min2
-                            minKey = entry.key
-                        }
-                    }
-                }
-                if (minKey != v.s && !v.neighbors.contains(data[minKey])) {
-                    connect(v.s, minKey)
-                    return true
-                } else {
-                    if (v.s == minKey) {
-                        return false
+                    )
+                    if (min2 < min) if (!v.neighbors.contains(data[entry.key])) {
+                        min = min2
+                        minKey = entry.key
                     }
                 }
             }
+            if (minKey != v.s && !v.neighbors.contains(data[minKey]) && data[minKey]!!.neighbors.count() <= 4 && v.neighbors.count() <= 2) {
+                /*System.out.println("соединяемое соседи" + v.neighbors.toString())
+                System.out.println("соединяем с - соседи" + data[minKey]!!.neighbors.toString())
+                System.out.println("соединили " + v.s + " с " + data[minKey]!!.s)
+                */
+                connect(v.s, minKey)
+                return true
+            } else {
+                if (v.s == minKey || v.neighbors.count() >= 2) {
+                    return false
+                }
+            }
+
         }
+
         return false
     }
 }

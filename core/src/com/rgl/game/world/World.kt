@@ -17,7 +17,7 @@ object World {
     }
 
     fun addLevel() {
-        data.add(Level.getNew(5 + data.lastIndex + 5))
+        data.add(Level.getNew(MapCFG.ROOMCOUNT))
     }
 
     fun loadSaved(seed: String) { //Загрузка сохраненного мира и

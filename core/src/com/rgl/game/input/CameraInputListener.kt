@@ -3,15 +3,12 @@ package com.rgl.game.input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
+import com.rgl.game.world.MapCFG
 import kotlin.math.round
 
 class CameraInputListener(camera: OrthographicCamera) : GestureListener {
     private val cam = camera
 
-    companion object {
-        private const val maxZoom = 20.0f
-        private const val minZoom = 1.0f
-    }
 
     override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean {
         return false
@@ -40,15 +37,15 @@ class CameraInputListener(camera: OrthographicCamera) : GestureListener {
     }
 
     override fun zoom(initialDistance: Float, distance: Float): Boolean {
-        if (cam.zoom <= maxZoom && initialDistance < distance && cam.zoom > minZoom) {
+        if (cam.zoom <= MapCFG.MAXZOOM && initialDistance < distance && cam.zoom > MapCFG.MINZOOM) {
             cam.zoom -= (distance - initialDistance) / 10000
             cam.update()
         }
-        if (cam.zoom >= minZoom && initialDistance > distance && cam.zoom <= maxZoom) {
+        if (cam.zoom >= MapCFG.MINZOOM && initialDistance > distance && cam.zoom <= MapCFG.MAXZOOM) {
             cam.zoom += (initialDistance - distance) / 10000
             cam.update()
         }
-        if (cam.zoom > maxZoom || cam.zoom < minZoom) {
+        if (cam.zoom > MapCFG.MAXZOOM || cam.zoom < MapCFG.MINZOOM) {
             cam.zoom = round(cam.zoom)
             cam.update()
         }

@@ -15,7 +15,7 @@ import com.rgl.game.input.CameraInputListener;
 import com.rgl.game.input.WorldInputListener;
 import com.rgl.game.world.MapCFG;
 import com.rgl.game.world.World;
-import com.rgl.game.world.level.DungeonLevel;
+import com.rgl.game.world.level.DungeonLevelGenerator;
 import com.rgl.game.world.level.Level;
 import com.rgl.game.world.level.Tile;
 
@@ -51,15 +51,15 @@ public class Main extends ApplicationAdapter {
         inputMultiplexer.addProcessor(new GestureDetector(cameraInputListener));
         inputMultiplexer.addProcessor(new GestureDetector(worldInputListener));
         Gdx.input.setInputProcessor(inputMultiplexer);
-
+        camera.zoom = MapCFG.ZOOM;
+        camera.position.set(755.90f, -9303.10f, 0.0f);
     }
 
     @Override
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
-        camera.zoom = 12;
-        camera.position.set(755.90f, -9303.10f, 0.0f);
         camera.update();
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         Level.INSTANCE.render(batch);
@@ -68,7 +68,7 @@ public class Main extends ApplicationAdapter {
         batch.end();
         shapeBatch.setProjectionMatrix(camera.combined);
         shapeBatch.begin();
-        DungeonLevel.INSTANCE.render(shapeBatch);
+        DungeonLevelGenerator.INSTANCE.renderLinks(shapeBatch);
         shapeBatch.end();
     }
 

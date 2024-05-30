@@ -10,11 +10,20 @@ class Tile(
     override var renderPos: Vector2, override var textureID: Byte, override var index: Index,
     override var isDrawable: Boolean
 ) : TileInterface, Drawable {
+
+    var prev:Index=Index(9999,9999)
     class Index(var x: Int, var y: Int) {
+
         @Override
         override fun toString(): String {
             return "($x;$y)"
         }
+
+        @Override
+        override fun hashCode(): Int {
+            return this.toString().hashCode()
+        }
+
     }
 
     var isObstacle: Boolean = false
