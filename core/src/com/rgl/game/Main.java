@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.rgl.game.graphics.TextureRepo;
 import com.rgl.game.gui.GuiInspect;
 import com.rgl.game.input.CameraInputListener;
+import com.rgl.game.input.GuiInputListener;
 import com.rgl.game.input.WorldInputListener;
 import com.rgl.game.world.MapCFG;
 import com.rgl.game.world.World;
@@ -29,6 +30,7 @@ public class Main extends ApplicationAdapter {
     CameraInputListener cameraInputListener;
     InputMultiplexer inputMultiplexer;
     WorldInputListener worldInputListener;
+    GuiInputListener guiInputListener;
     ShapeRenderer shapeBatch;
 
 
@@ -44,10 +46,12 @@ public class Main extends ApplicationAdapter {
         uicamera.setToOrtho(false, MapCFG.VIEWPORTWIDTH, MapCFG.VIEWPORTHEIGHT);
         cameraInputListener = new CameraInputListener(camera);
         worldInputListener = new WorldInputListener(camera, batch);
+        guiInputListener = new GuiInputListener(uicamera);
         camera.setToOrtho(false, MapCFG.VIEWPORTWIDTH, MapCFG.VIEWPORTHEIGHT);
         World.INSTANCE.addLevel();
         currentLevel = World.INSTANCE.getLevel();
         inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(new GestureDetector(guiInputListener));
         inputMultiplexer.addProcessor(new GestureDetector(cameraInputListener));
         inputMultiplexer.addProcessor(new GestureDetector(worldInputListener));
         Gdx.input.setInputProcessor(inputMultiplexer);
@@ -59,17 +63,19 @@ public class Main extends ApplicationAdapter {
     public void render() {
         ScreenUtils.clear(0, 0, 0, 1);
         camera.update();
-
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         Level.INSTANCE.render(batch);
         batch.setProjectionMatrix(uicamera.combined);
-        GuiInspect.INSTANCE.render(batch, uicamera);
         batch.end();
         shapeBatch.setProjectionMatrix(camera.combined);
         shapeBatch.begin();
         DungeonLevelGenerator.INSTANCE.renderLinks(shapeBatch);
         shapeBatch.end();
+        batch.begin();
+        GuiInspect.INSTANCE.render(batch, uicamera);
+        batch.end();
+
     }
 
     @Override

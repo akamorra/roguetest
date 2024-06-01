@@ -3,6 +3,7 @@ package com.rgl.game.world.level
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.Vector2
+import com.rgl.game.graphics.Textures
 
 //Level - Singleton класс для хранения,обработки данных и отрисовки текущего уровня
 object Level {
@@ -14,7 +15,7 @@ object Level {
     private var data: Array<Array<Tile>> = Array(1) {
         Array(1) {
             Tile(
-                Vector2(1.0f, 1.0f), 1,
+                Vector2(1.0f, 1.0f), Textures.EMPTY_TEXTURE.id,
                 Tile.Index(0, 0), false
             )
         }

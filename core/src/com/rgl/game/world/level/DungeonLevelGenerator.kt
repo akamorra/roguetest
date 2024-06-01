@@ -19,7 +19,7 @@ object DungeonLevelGenerator {
     private var pointerX: Int = 0
     private var pointerY: Int = 0
     private var data: Array<Array<Tile>> =
-        Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), 0, Tile.Index(0, 0), false) } }
+        Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), Textures.EMPTY_TEXTURE.id, Tile.Index(0, 0), false) } }
     private var listOfRooms: ArrayList<Room> = ArrayList()
     private var graphOfRooms: Graph = Graph()
     private var spawned: Boolean = false
@@ -29,10 +29,11 @@ object DungeonLevelGenerator {
     fun getDungeonLevel(rooms: Int): Array<Array<Tile>> {
         clearData()
         addRooms(rooms)
-        addToGraph()
+
         setIndexes()
         setRenderPoses()
         setCenters()
+        addToGraph()
         Thread {
             makeConnections()
         }.start()
@@ -67,7 +68,7 @@ object DungeonLevelGenerator {
             Array(MapCFG.MAPSIZE) {
                 Tile(
                     Vector2(1.0f, 1.0f),
-                    0,
+                    Textures.EMPTY_TEXTURE.id,
                     Tile.Index(0, 0),
                     false
                 )
@@ -120,7 +121,7 @@ object DungeonLevelGenerator {
                 for (i in 0..<it.getSrc().size + 2) {
                     if (!breakFlag) for (j in 0..<it.getSrc()[0].size + 2) {
                         //System.out.print((pointerX + i - 1).toString() + " : "+(pointerY + j - 1).toString()+"; ")
-                        if (data[pointerX + i - 1][pointerY + j - 1].textureID.toInt() != 0) {
+                        if (data[pointerX + i - 1][pointerY + j - 1].textureID != Textures.EMPTY_TEXTURE.id) {
                             breakFlag = true
                             break
                         }

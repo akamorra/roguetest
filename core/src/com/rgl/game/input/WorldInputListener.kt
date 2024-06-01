@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
-import com.rgl.game.graphics.TextureRepo
-import com.rgl.game.graphics.Textures
 import com.rgl.game.gui.GuiInspect
 import com.rgl.game.world.MapCFG
 import com.rgl.game.world.level.Level
@@ -38,7 +36,7 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch)
                     if (it1.isInspectable()) {
                         GuiInspect.show(
                             "ObjectHash:" + it1.hashCode(), it1.index.toString(), it1.toString(),
-                            TextureRepo.getTexture(Textures.EMPTY_TEXTURE.id)
+                            it1.textureID
                         )
                         return false
                     } else {

@@ -13,7 +13,7 @@ data class Room(var width: Int, var height: Int) {
         val generator:Room=Room(1,1)
     }
     private var src: Array<Array<Tile>> =
-        Array(width) { Array(height) { Tile(Vector2(1.0f, 1.0f), 1, Tile.Index(0, 0), false) } }
+        Array(width) { Array(height) { Tile(Vector2(1.0f, 1.0f), Textures.EMPTY_TEXTURE.id, Tile.Index(0, 0), false) } }
 
     fun getCenter(): Vector2 = center
 
