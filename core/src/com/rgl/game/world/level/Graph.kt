@@ -68,8 +68,10 @@ class Graph {
     private fun connect(v1: Vertex, v2: Vertex) {
         v1.neighbors.add(v2)
         v2.neighbors.add(v1)
-        v1.edgesList.add(Vertex.edge(v1, v2))
-        v2.edgesList.add(Vertex.edge(v1,v2))
+
+            v1.edgesList.add(Vertex.edge(v1, v2))
+            v2.edgesList.add(Vertex.edge(v1, v2))
+        
     }
 
     @Suppress("SuspiciousIndentation")
@@ -83,10 +85,10 @@ class Graph {
         if (data.contains(s1) && !visited.contains(data[s1])) {
             visited.add(data[s1]!!)
             data[s1]!!.neighbors.forEach {
+                connect(it,data[s1]!!)
                 deepFirstSearch(it.s, visited)
             }
         }
-        //System.out.println(visited.toString())
         returnPaired.bool = visited.count() == data.count()
         returnPaired.set = visited
         return returnPaired
@@ -95,30 +97,16 @@ class Graph {
     fun check() {
         var flag = true
         while (flag) {
-           // run breaking@{
                 flag = false
                 data.forEach {
-
-                        if (it.value.neighbors.count() <= 2) {
-                            //System.out.println(it.key + "соседи:" + data[it.key]!!.neighbors.toString())
+                        if (it.value.neighbors.count() <= 3) {
                             if (!deepFirstSearch(it.key, mutableSetOf()).bool) {
-                                //System.out.println(returnPaired.bool.toString())
-                                /*data.forEach{ it2->
-                                if(!returnPaired.set.contains(it2.value)&&!flag){
-                                    connectToClosest(it2.value)
-                                    flag = true
-                                }
-                            }*/
-
                                 connectToClosest(returnPaired.set.last())
                                 flag = true
                                 if (flag) return@forEach
                             }
                         }
                 }
-                    //if (flag) return@breaking
-                //}
-
         }
 
     }
@@ -142,10 +130,6 @@ class Graph {
                 }
             }
             if (minKey != v.s && !v.neighbors.contains(data[minKey]) && data[minKey]!!.neighbors.count() <= 4 && v.neighbors.count() <= 2) {
-                /*System.out.println("соединяемое соседи" + v.neighbors.toString())
-                System.out.println("соединяем с - соседи" + data[minKey]!!.neighbors.toString())
-                System.out.println("соединили " + v.s + " с " + data[minKey]!!.s)
-                */
                 connect(v.s, minKey)
                 return true
             } else {

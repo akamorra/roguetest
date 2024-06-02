@@ -34,7 +34,7 @@ object GuiInspect{
                renderPos= Vector2(tempV3.x-INSPECT_GUI_WIDTH/2, tempV3.y+VIEWPORTHEIGHT+INSPECT_GUI_HEIGHT/2)
             }
         }
-        batch.draw(TextureRepo.getGuiTexture("inspect"), renderPos.x, renderPos.y,INSPECT_GUI_WIDTH* INSPECT_GUI_SCALE,INSPECT_GUI_HEIGHT* INSPECT_GUI_SCALE) //
+        batch.draw(TextureRepo.getGui("inspect"), renderPos.x, renderPos.y,INSPECT_GUI_WIDTH* INSPECT_GUI_SCALE,INSPECT_GUI_HEIGHT* INSPECT_GUI_SCALE) //
         batch.draw(TextureRepo.getTexture(icon),renderPos.x+58* INSPECT_GUI_SCALE,renderPos.y+280* INSPECT_GUI_SCALE,INSPECT_GUI_ICON_SIZE* INSPECT_GUI_SCALE,INSPECT_GUI_ICON_SIZE* INSPECT_GUI_SCALE)
         font.setColor(255.0f,0.0f,0.0f,1.0f)
         font.draw(batch, title,renderPos.x+ (INSPECT_GUI_WIDTH/3+20)* INSPECT_GUI_SCALE, renderPos.y+392* INSPECT_GUI_SCALE)

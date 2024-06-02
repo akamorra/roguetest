@@ -10,8 +10,8 @@ class Tile(
     override var renderPos: Vector2, override var textureID: Byte, override var index: Index,
     override var isDrawable: Boolean
 ) : TileInterface, Drawable {
-
-    var prev:Index=Index(9999,9999)
+    override var zDepth: Int = 0
+    var prev:Index?=null
     class Index(var x: Int, var y: Int) {
 
         @Override
@@ -23,6 +23,8 @@ class Tile(
         override fun hashCode(): Int {
             return this.toString().hashCode()
         }
+
+        var cost:Int=0
 
     }
 
@@ -48,5 +50,12 @@ class Tile(
                 "\nGlobalIndex:" + index.toString() + "\nTextureID:(" + textureID + ")"
     }
 
+    fun getCenter():Vector2{
+        return Vector2(renderPos.x+TILESIZE/2,renderPos.y+58*TILESIZE/128)
+    }
 
+    override fun compareTo(other: Drawable): Int {
+        zDepth=index.x+index.y*10
+        return zDepth-other.zDepth
+    }
 }

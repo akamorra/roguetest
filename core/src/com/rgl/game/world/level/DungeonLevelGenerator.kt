@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.Vector2
 import com.rgl.game.graphics.Textures
 import com.rgl.game.world.MapCFG
+import com.rgl.game.world.MapCFG.MAPSIZE
 import com.rgl.game.world.MapCFG.MULTIPLIER
 import com.rgl.game.world.MapCFG.ROOMSIZE
+import com.rgl.game.world.level.Level.objectsManager
 import com.rgl.game.world.level.Level.update
-import java.util.LinkedList
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -18,37 +20,47 @@ object DungeonLevelGenerator {
     private var pointer: Int = 0
     private var pointerX: Int = 0
     private var pointerY: Int = 0
+    private var itemsGenerator = ItemsGenerator()
     private var data: Array<Array<Tile>> =
-        Array(1) { Array(1) { Tile(Vector2(1.0f, 1.0f), Textures.EMPTY_TEXTURE.id, Tile.Index(0, 0), false) } }
+        Array(1) {
+            Array(1) {
+                Tile(
+                    Vector2(1.0f, 1.0f),
+                    Textures.EMPTY_TEXTURE.id,
+                    Tile.Index(0, 0),
+                    false
+                )
+            }
+        }
     private var listOfRooms: ArrayList<Room> = ArrayList()
     private var graphOfRooms: Graph = Graph()
     private var spawned: Boolean = false
     private var breakFlag: Boolean = false
-    private var weightMap: Array<Array<Float>> = Array(1) { Array(1) { 1.0f } }
+    private var weightMap: Array<Array<Int>> = Array(1) { Array(1) { 1 } }
 
     fun getDungeonLevel(rooms: Int): Array<Array<Tile>> {
         clearData()
         addRooms(rooms)
-
         setIndexes()
         setRenderPoses()
         setCenters()
         addToGraph()
+
         Thread {
             makeConnections()
         }.start()
+        itemsGenerator.generate(MapCFG.ROOMCOUNT*3,MapCFG.ROOMCOUNT*3/2, objectsManager,1, graphOfRooms)
         prepare()
         return data
     }
 
-    fun get(): Array<Array<Tile>>{
+    fun get(): Array<Array<Tile>> {
         return data
     }
 
     //adding rooms as a vertexes to graph
     private fun addToGraph() {
         for (i in 0..<listOfRooms.size) graphOfRooms.add(i.toString(), listOfRooms[i])
-        //graphOfRooms.get().forEach { entry -> System.out.println(entry.toString() + "\n") }
     }
 
 
@@ -64,8 +76,8 @@ object DungeonLevelGenerator {
 
     //erases array before making a new level
     private fun clearData() {
-        data = Array(MapCFG.MAPSIZE) {
-            Array(MapCFG.MAPSIZE) {
+        data = Array(MAPSIZE) {
+            Array(MAPSIZE) {
                 Tile(
                     Vector2(1.0f, 1.0f),
                     Textures.EMPTY_TEXTURE.id,
@@ -79,9 +91,9 @@ object DungeonLevelGenerator {
                 it1.isObstacle = false
             }
         }
-        weightMap = Array(MapCFG.MAPSIZE) {
-            Array(MapCFG.MAPSIZE) {
-                (0.0f)
+        weightMap = Array(MAPSIZE) {
+            Array(MAPSIZE) {
+                (0)
             }
         }
     }
@@ -94,7 +106,7 @@ object DungeonLevelGenerator {
     //making doors for every room towards its neighbor rooms
     private fun addRooms(rooms: Int) {
         for (it in 0..rooms) {
-            listOfRooms.add(Room.generator.getNextRandom(MapCFG.ROOMSIZE, MapCFG.ROOMSIZE))
+            listOfRooms.add(Room.generator.getNextRandom(ROOMSIZE, ROOMSIZE))
         }
         for (it in listOfRooms) {
             spawned = false
@@ -102,41 +114,41 @@ object DungeonLevelGenerator {
 
                 breakFlag = false
                 pointerX = Random.nextInt(
-                    MapCFG.MAPSIZE / 2 - ROOMSIZE * MULTIPLIER + ROOMSIZE,
-                    MapCFG.MAPSIZE / 2 + ROOMSIZE * MULTIPLIER + ROOMSIZE
+                    MAPSIZE / 2 - ROOMSIZE * MULTIPLIER + ROOMSIZE,
+                    MAPSIZE / 2 + ROOMSIZE * MULTIPLIER + ROOMSIZE
                 )
                 pointerY = Random.nextInt(
-                    MapCFG.MAPSIZE / 2 - ROOMSIZE * MULTIPLIER + ROOMSIZE,
-                    MapCFG.MAPSIZE / 2 + ROOMSIZE * MULTIPLIER + ROOMSIZE
+                    MAPSIZE / 2 - ROOMSIZE * MULTIPLIER + ROOMSIZE,
+                    MAPSIZE / 2 + ROOMSIZE * MULTIPLIER + ROOMSIZE
                 )
-                if (pointerX <= 0 || pointerX >= MapCFG.MAPSIZE) pointerX =
-                    Random.nextInt(MapCFG.MAPSIZE) + 2
-                if (pointerY <= 0 || pointerY >= MapCFG.MAPSIZE) pointerY =
-                    Random.nextInt(MapCFG.MAPSIZE) + 2
-                if ((pointerX + it.getSrc().size + 4) > data.size - 2) pointerX -= (pointerX + it.getSrc().size) - data[0].size + 1
-                if ((pointerY + it.getSrc()[0].size + 4) > data[0].size - 2) pointerY -= (pointerY + it.getSrc()[0].size) - data[0].size + 1
+                if (pointerX <= 0 || pointerX >= MAPSIZE) pointerX =
+                    Random.nextInt(MAPSIZE) + 2
+                if (pointerY <= 0 || pointerY >= MAPSIZE) pointerY =
+                    Random.nextInt(MAPSIZE) + 2
+                if ((pointerX + it.getSrc().size + 5) > data.size - 2) pointerX -= (pointerX + it.getSrc().size) - data[0].size + 1
+                if ((pointerY + it.getSrc()[0].size + 5) > data[0].size - 2) pointerY -= (pointerY + it.getSrc()[0].size) - data[0].size + 1
                 if (pointerX <= 1) pointerX + 2
                 if (pointerY <= 1) pointerY + 2
 
-                for (i in 0..<it.getSrc().size + 2) {
-                    if (!breakFlag) for (j in 0..<it.getSrc()[0].size + 2) {
-                        //System.out.print((pointerX + i - 1).toString() + " : "+(pointerY + j - 1).toString()+"; ")
-                        if (data[pointerX + i - 1][pointerY + j - 1].textureID != Textures.EMPTY_TEXTURE.id) {
+                for (i in 0..<it.getSrc().size + 4) {
+                    if (!breakFlag) for (j in 0..<it.getSrc()[0].size + 4) {
+                        if (data[pointerX + i][pointerY + j].textureID != Textures.EMPTY_TEXTURE.id) {
                             breakFlag = true
                             break
                         }
-
                     }
-                    //println()
                 }
+
+
+
                 if (!breakFlag) spawned = true
             }
 
-            for (i in 0..<it.getSrc().size) {
-                for (j in 0..<it.getSrc()[0].size) {
-                    it.getSrc()[i][j].index.x = pointerX + i
-                    it.getSrc()[i][j].index.y = pointerY + j
-                    data[pointerX + i][pointerY + j] = it.getSrc()[i][j]
+            for (i in 1..<it.getSrc().size + 1) {
+                for (j in 1..<it.getSrc()[0].size + 1) {
+                    it.getSrc()[i - 1][j - 1].index.x = pointerX + i
+                    it.getSrc()[i - 1][j - 1].index.y = pointerY + j
+                    data[pointerX + i][pointerY + j] = it.getSrc()[i - 1][j - 1]
                 }
             }
 
@@ -193,7 +205,6 @@ object DungeonLevelGenerator {
 
     //making doors&&making corridors between connected rooms
     private fun makeConnections() {
-
         graphOfRooms.check()
         graphOfRooms.get().forEach {
             graphOfRooms.neighbors(it.key).forEach { it2 ->
@@ -201,9 +212,14 @@ object DungeonLevelGenerator {
                 update()
             }
         }
+
         setObstacles()
         println("Start")
         makeCorridors()
+        graphOfRooms.get().forEach {
+           it.value.room.fillW()
+        }
+        update()
         println("End")
     }
 
@@ -212,17 +228,9 @@ object DungeonLevelGenerator {
         for (row in weightMap.indices) {
             for (col in 0..<weightMap[0].size) {
                 if (data[row][col].isObstacle)
-                    weightMap[row][col] = 99999.0f else
-                    weightMap[row][col] =
-                        sqrt(
-                            (end.index.x - data[row][col].index.x).toFloat()
-                                .pow(2) + (end.index.y - data[row][col].index.y).toFloat().pow(
-                                2
-                            )
-                        )
-                //System.out.print(" "+ weightMap[row][col])
+                    weightMap[row][col] = 99999 else
+                    weightMap[row][col] = abs(row - end.index.x) + abs(col - end.index.y)
             }
-            //System.out.println()
         }
     }
 
@@ -230,160 +238,125 @@ object DungeonLevelGenerator {
     private fun makeCorridors() {
 
         graphOfRooms.get().forEach { vertex ->
-            graphOfRooms.neighbors(vertex.key).forEach { it ->
-                if (!it.edgesList.contains(Graph.Vertex.edge(vertex.value, it))) {
-                    val start = vertex.value.room.getDoor(it.room)
-                    val end = it.room.getDoor(vertex.value.room)
+            graphOfRooms.neighbors(vertex.key).forEach { ngb ->
+                if (ngb.edgesList.contains(Graph.Vertex.edge(vertex.value, ngb))) {
+
+                    val start = vertex.value.room.getDoor(ngb.room)
+                    val end = ngb.room.getDoor(vertex.value.room)
                     val path = path(start, end)
-                    var flag = false
-                    //System.out.println()
-                    var p = path.size
+                    /*println("start:" + start.index.toString() + "  end:" + end.index.toString())
+                    println(path.first().index.toString() + " " + path.last().index.toString())
+                    path.forEach { it ->
+                        print("->" + it.index.toString())
+                    }*/
 
-                    path.asReversed().forEach {
-                        //System.out.print(""+it.index.x+";"+it.index.y+" -> ")
-                        if (!flag) {
-                            if (it == start) {
-                                flag = true
-                            } else {
-                                it.isDrawable = true
-                                it.textureID = (Random.nextInt(3) + 1).toByte()
-                                it.isObstacle = false
-                                if (data[it.index.x + 1][it.index.y + 1].isObstacle)
-                                    data[it.index.x + 1][it.index.y + 1].textureID =
-                                        Textures.STONEWALL_TRANSPARENT.id
-                                if (data[it.index.x + 2][it.index.y + 2].isObstacle) data[it.index.x + 2][it.index.y + 2].textureID =
-                                    Textures.STONEWALL_TRANSPARENT.id
-                                if (data[it.index.x + 1][it.index.y].isObstacle) if (!Textures.listOfWalkable.contains(
-                                        data[it.index.x + 1][it.index.y].textureID
-                                    )
-                                )
-                                    if (!Textures.listOfWalkable.contains(data[it.index.x + 1][it.index.y + 1].textureID)) data[it.index.x + 1][it.index.y].textureID =
-                                        Textures.STONEWALL_TRANSPARENT_E.id
-                                if (data[it.index.x][it.index.y + 1].isObstacle) if (!Textures.listOfWalkable.contains(
-                                        data[it.index.x][it.index.y + 1].textureID
-                                    )
-                                )
-                                    if (!Textures.listOfWalkable.contains(data[it.index.x + 1][it.index.y + 1].textureID)) data[it.index.x][it.index.y + 1].textureID =
-                                        Textures.STONEWALL_TRANSPARENT_W.id
-                            }
-                        }
-                    }
-                    it.room.fillW()
-                    vertex.value.room.fillW()
-                    it.room.listOfDoors.forEach {
+                    path.forEach { it ->
 
-                        data[it.x][it.y].textureID = Textures.DOOR.id
-                        data[it.x][it.y].isObstacle = false
-                        data[it.x][it.y].isDrawable = true
-
-                    }
-                    vertex.value.room.listOfDoors.forEach {
-
-                        data[it.x][it.y].textureID = Textures.DOOR.id
-                        data[it.x][it.y].isObstacle = false
-                        data[it.x][it.y].isDrawable = true
-                    }
-                    if (!vertex.value.edgesList.contains(
-                            Graph.Vertex.edge(
-                                it,
-                                vertex.value
+                        it.isDrawable = true
+                        it.textureID = (Random.nextInt(123,127)).toByte()
+                        it.isObstacle = false
+                        if (data[it.index.x + 1][it.index.y + 1].isObstacle)
+                            data[it.index.x + 1][it.index.y + 1].textureID =
+                                Textures.STONEWALL_TRANSPARENT.id
+                        if (data[it.index.x + 2][it.index.y + 2].isObstacle) data[it.index.x + 2][it.index.y + 2].textureID =
+                            Textures.STONEWALL_TRANSPARENT.id
+                        if (data[it.index.x + 1][it.index.y].isObstacle) if (!Textures.listOfWalkable.contains(
+                                data[it.index.x + 1][it.index.y].textureID
                             )
                         )
-                    ) vertex.value.edgesList.add(Graph.Vertex.edge(it, vertex.value))
-                    if (!it.edgesList.contains(
-                            Graph.Vertex.edge(
-                                it,
-                                vertex.value
+                            if (!Textures.listOfWalkable.contains(data[it.index.x + 1][it.index.y + 1].textureID)) data[it.index.x + 1][it.index.y].textureID =
+                                Textures.STONEWALL_TRANSPARENT_E.id
+                        if (data[it.index.x][it.index.y + 1].isObstacle) if (!Textures.listOfWalkable.contains(
+                                data[it.index.x][it.index.y + 1].textureID
                             )
                         )
-                    ) it.edgesList.add(Graph.Vertex.edge(it, vertex.value))
+                            if (!Textures.listOfWalkable.contains(data[it.index.x + 1][it.index.y + 1].textureID)) data[it.index.x][it.index.y + 1].textureID =
+                                Textures.STONEWALL_TRANSPARENT_W.id
+
+                    }
+
                 }
-                    update()
+                ngb.edgesList.remove(Graph.Vertex.edge(ngb,vertex.value))
+                vertex.value.edgesList.remove(Graph.Vertex.edge(ngb,vertex.value))
+
+                update()
+                println()
+                //System.out.println(start.index.toString() + "#######" + end.index.toString())
+                println()
+
+                update()
 
             }
         }
     }
 
     //A* algorithm for Array[][] of weights
-    private fun path(start: Tile, end: Tile): LinkedList<Tile> {
+    private fun path(start: Tile, end: Tile): MutableSet<Tile> {
         prepareWeights(end)
-        var currentNode = start.index
-        val reachable: LinkedList<Tile.Index> = LinkedList()
-        var newReachable: MutableSet<Tile.Index> = mutableSetOf()
-        val explored: MutableSet<Tile.Index> = mutableSetOf()
-        val path: LinkedList<Tile> = LinkedList<Tile>()
+        var tempIndex = Tile.Index(0, 0)
+        var min = 9999.0
+
+        var currentNode: Tile.Index
+        val openSet: MutableSet<Tile.Index> = mutableSetOf()
+        val closedSet: MutableSet<Tile.Index> = mutableSetOf()
+        var path: MutableSet<Tile> = mutableSetOf()
         var neighbors: MutableSet<Tile.Index>
-        reachable.add(start.index)
-        var min = 9999.0f
-        while (reachable.isNotEmpty()) {
+        var neighborsUnexplored: MutableSet<Tile.Index> = mutableSetOf()
+        openSet.add(start.index)
+        currentNode = start.index
+        while (openSet.isNotEmpty()) {
 
             neighbors = mutableSetOf()
-            if (currentNode.x < MapCFG.MAPSIZE - 1 && currentNode.y < MapCFG.MAPSIZE - 1 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
+            openSet.forEach {
+                var min2 = sqrt(
+                    (end.index.x - it.x).toDouble().pow(2) + (end.index.y - it.y).toDouble()
+                        .pow(2) + weightMap[it.x][it.y]
+                )
+                if (min2 <= min) {
+                    min = min2
+                    tempIndex = it
+                }
+
+            }
+            currentNode = tempIndex
+            if (currentNode == end.index) {
+                path.add(data[currentNode.x][currentNode.y])
+                path = mutableSetOf()
+
+                while (data[currentNode.x][currentNode.y].prev != start.index) {
+                    currentNode = data[currentNode.x][currentNode.y].prev!!
+                    path.add(data[currentNode.x][currentNode.y])
+                }
+                return path
+            }
+            openSet.remove(currentNode)
+            closedSet.add(currentNode)
+            if (currentNode.x < MAPSIZE - 3 && currentNode.y < MAPSIZE - 3 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
                 data[currentNode.x + 1][currentNode.y].index
             )
-            if (currentNode.x < MapCFG.MAPSIZE - 1 && currentNode.y < MapCFG.MAPSIZE - 1 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
+            if (currentNode.x < MAPSIZE - 3 && currentNode.y < MAPSIZE - 3 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
                 data[currentNode.x - 1][currentNode.y].index
             )
-            if (currentNode.x < MapCFG.MAPSIZE - 1 && currentNode.y < MapCFG.MAPSIZE - 1 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
+            if (currentNode.x < MAPSIZE - 1 && currentNode.y < MAPSIZE - 1 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
                 data[currentNode.x][currentNode.y - 1].index
             )
-            if (currentNode.x < MapCFG.MAPSIZE - 1 && currentNode.y < MapCFG.MAPSIZE - 1 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
+            if (currentNode.x < MAPSIZE - 1 && currentNode.y < MAPSIZE - 1 && currentNode.x > 1 && currentNode.y > 1) neighbors.add(
                 data[currentNode.x][currentNode.y + 1].index
             )
-            reachable.remove(currentNode)
-
-
+            neighborsUnexplored = mutableSetOf()
             neighbors.forEach {
-                if (weightMap[it.x][it.y] <= min && !explored.contains(it)) {
-                    //System.out.println("Contains in neighbor"+!explored.contains(it))
-                    min = weightMap[it.x][it.y]
-                    currentNode = it
-                } else if (explored.contains(currentNode)) {
-                    min = 9998.0f
-                    weightMap[it.x][it.y] = min
+                if (!closedSet.contains(it)) {
+                    neighborsUnexplored.add(it)
                 }
-
-            }
-            println("en")
-            explored.forEach {
-                newReachable.remove(it)
-            }
-            if (data[currentNode.x][currentNode.y] == end
-            ) {
-                path.add(data[currentNode.x][currentNode.y])
-                break
-            }
-
-            /*println("Doors:" + start.index.x + " " + start.index.y + " -> " + end.index.x + " " + end.index.y)
-            println(
-                "CurrentNode: $currentNode\n Explored:$explored\n Contained" + explored.contains(
-                    currentNode
-                ).toString() + " Weight: " + weightMap[currentNode.x][currentNode.y]
-            )*/
-            newReachable = neighbors.toMutableSet()
-            //newReachable.remove(currentNode)
-            explored.forEach {
-                newReachable.remove(it)
-            }
-
-            neighbors.forEach {
-                if (data[it.x][it.y].isObstacle)
-                    newReachable.remove(it)
-            }
-
-            newReachable.forEach {
-                if (it !in explored) {
-                    data[it.x][it.y].prev = currentNode
-                    path.add(data[currentNode.x][currentNode.y])
-                    reachable.add(it)
-                    explored.add(currentNode)
+                neighborsUnexplored.forEach {
+                    if (!openSet.contains(it)) {
+                        data[it.x][it.y].prev = currentNode
+                        openSet.add(it)
+                    }
                 }
             }
-            //System.out.println("egg")
         }
-        //System.out.println("egg")
 
-        path.removeLast()
         return path
     }
 

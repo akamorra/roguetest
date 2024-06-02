@@ -42,13 +42,19 @@ data class Room(var width: Int, var height: Int) {
         if(Textures.listOfTransparents.contains(src[0][src[0].lastIndex].textureID)) src[0][src[0].lastIndex].textureID=Textures.STONEWALL_TRANSPARENT.id
         if(Textures.listOfTransparents.contains(src[src.lastIndex][0].textureID)) src[src.lastIndex][0].textureID=Textures.STONEWALL_TRANSPARENT.id
         if(Textures.listOfTransparents.contains(src[src.lastIndex][src[0].lastIndex].textureID)) src[src.lastIndex][src[0].lastIndex].textureID=Textures.STONEWALL_TRANSPARENT.id
-
+        for(i in 0..<src.size-1) if (Textures.listOfWalkable.contains(src[0][i].textureID)) {
+            if (Textures.listOfTransparents.contains(src[0][i-1].textureID))src[i+1][0].textureID=Textures.STONEWALL_TRANSPARENT.id
+        }
+        for(i in 0..<src[0].size-1) if (Textures.listOfWalkable.contains(src[0][i].textureID)){
+            if (Textures.listOfTransparents.contains(src[i-1][0].textureID))src[0][i+1].textureID=Textures.STONEWALL_TRANSPARENT.id
+        }
     }
      private fun fill() {
         for (it in src) {
             for (it1 in it) {
-                it1.textureID = (Random.nextInt(3) + 1).toByte()
+                it1.textureID = (Random.nextInt(124,127)).toByte()
                 it1.isObstacle = false
+                it1.isDrawable = true
             }
         }
         for (it in 0..<src.size) {

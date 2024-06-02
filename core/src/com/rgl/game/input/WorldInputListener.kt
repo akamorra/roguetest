@@ -23,8 +23,17 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch)
         tapPos = camera.unproject(Vector3(x, y, 0.0f))
         //System.out.println(" " + x + ";" + y)
         //System.out.println(" " + tapPos.x + ";" + tapPos.y)
-
-
+        Level.objectsManager.getList().forEach {
+            if ((it.value.renderPos.x + MapCFG.ITEM_ONMAP_SIZE / 2 - tapPos.x).pow(2) / (MapCFG.ITEM_ONMAP_SIZE / 2).pow(
+                    2
+                ) + (it.value.renderPos.y + MapCFG.ITEM_ONMAP_SIZE / 2 - 14 - tapPos.y).pow(
+                    2
+                ) / (MapCFG.ITEM_ONMAP_SIZE / 2).pow(2) < 1
+            ) {
+                GuiInspect.show("ObjectHash:"+it.value.hashCode(),"Item",it.value.toString(),it.value.textureID)
+                return true
+            }
+        }
         for (it in Level.get()) {
             for (it1 in it) {
                 if ((it1.renderPos.x + MapCFG.TILESIZE / 2 - tapPos.x).pow(2) / (MapCFG.TILESIZE / 2).pow(
@@ -45,6 +54,7 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch)
                 }
             }
         }
+
         return false
     }
 
