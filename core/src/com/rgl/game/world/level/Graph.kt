@@ -12,6 +12,8 @@ class Graph {
         var clr = Random.nextInt(7) - 1
         var color: Color = Color()
         var edgesList: MutableSet<edge> = mutableSetOf()
+        var isSpawnPoint:Boolean = false
+        var isEndPoint:Boolean = false
         override fun toString(): String {
             return "S=" + s + " "
         }
@@ -115,10 +117,9 @@ class Graph {
         if (!data.isNullOrEmpty()) {
             var min = 999999.0f
             var minKey = v.s
-            var flag = true
             data.forEach { entry ->
                 if (!v.neighbors.contains(entry.value) && v != entry.value) {
-                    var min2 = sqrt(
+                    val min2 = sqrt(
                         (entry.value.room.getCenter().x - v.room.getCenter().x).pow(2) + (entry.value.room.getCenter().y - v.room.getCenter().y).pow(
                             2
                         )

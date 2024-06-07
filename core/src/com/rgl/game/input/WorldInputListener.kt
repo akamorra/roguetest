@@ -5,13 +5,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
+import com.rgl.game.graphics.Textures
 import com.rgl.game.gui.GuiInspect
 import com.rgl.game.world.MapCFG
+import com.rgl.game.world.game_objects.drawable.player.Player
 import com.rgl.game.world.level.Level
+import com.rgl.game.world.level.Tile
 import kotlin.math.pow
 
 
-class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch) : GestureListener {
+class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch, var lvl:Level, var player: Player) : GestureListener {
+    private var selectedTile: Tile? = null
+    private var selectedTile2:Tile?=null
+
     override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean {
 
         return false
@@ -21,20 +27,32 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch)
 
     override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
         tapPos = camera.unproject(Vector3(x, y, 0.0f))
-        //System.out.println(" " + x + ";" + y)
-        //System.out.println(" " + tapPos.x + ";" + tapPos.y)
-        Level.objectsManager.getList().forEach {
+        lvl.objectsManager.getList().forEach {
             if ((it.value.renderPos.x + MapCFG.ITEM_ONMAP_SIZE / 2 - tapPos.x).pow(2) / (MapCFG.ITEM_ONMAP_SIZE / 2).pow(
                     2
                 ) + (it.value.renderPos.y + MapCFG.ITEM_ONMAP_SIZE / 2 - 14 - tapPos.y).pow(
                     2
                 ) / (MapCFG.ITEM_ONMAP_SIZE / 2).pow(2) < 1
             ) {
+                if(selectedTile==null){selectedTile=lvl.get()[it.value.index.x][it.value.index.y]}
+                else{
+                    selectedTile2=lvl.get()[it.value.index.x][it.value.index.y]
+                    if(selectedTile!!.index==selectedTile2!!.index){
+
+                        player.moveTo(selectedTile2!!,lvl)
+                        selectedTile=null
+                        selectedTile2=null
+                    } else {
+                        selectedTile=selectedTile2
+                        selectedTile2=null
+                    }
+                }
                 GuiInspect.show("ObjectHash:"+it.value.hashCode(),"Item",it.value.toString(),it.value.textureID)
+
                 return true
             }
         }
-        for (it in Level.get()) {
+        for (it in lvl.get()) {
             for (it1 in it) {
                 if ((it1.renderPos.x + MapCFG.TILESIZE / 2 - tapPos.x).pow(2) / (MapCFG.TILESIZE / 2).pow(
                         2
@@ -42,14 +60,30 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch)
                         2
                     ) / (MapCFG.TILESIZE / 2).pow(2) < 1
                 ) {
-                    if (it1.isInspectable()) {
+                    if (it1.isInspectable()&& Textures.listOfWalkable.contains(it1.textureID)) {
                         GuiInspect.show(
                             "ObjectHash:" + it1.hashCode(), it1.index.toString(), it1.toString(),
                             it1.textureID
+
                         )
-                        return false
+                        if(selectedTile==null){selectedTile=lvl.get()[it1.index.x][it1.index.y]}
+                        else{
+                            selectedTile2=lvl.get()[it1.index.x][it1.index.y]
+                            if(selectedTile!!.index==selectedTile2!!.index){
+                                player.moveTo(selectedTile2!!,lvl)
+                                selectedTile=null
+                                selectedTile2=null
+                            } else {
+                                selectedTile=selectedTile2
+                                selectedTile2=null
+                            }
+                        }
+                        return true
                     } else {
                         GuiInspect.hide()
+                        selectedTile=null
+                        selectedTile2=null
+                        return true
                     }
                 }
             }

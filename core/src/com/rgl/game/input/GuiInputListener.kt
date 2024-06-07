@@ -5,6 +5,7 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
 
 class GuiInputListener (camera:OrthographicCamera):GestureListener {
+
     override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean {
         return false
     }

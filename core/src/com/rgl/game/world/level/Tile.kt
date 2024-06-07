@@ -12,6 +12,7 @@ class Tile(
 ) : TileInterface, Drawable {
     override var zDepth: Int = 0
     var prev:Index?=null
+    var containsInstance=false
     class Index(var x: Int, var y: Int) {
 
         @Override
@@ -23,9 +24,6 @@ class Tile(
         override fun hashCode(): Int {
             return this.toString().hashCode()
         }
-
-        var cost:Int=0
-
     }
 
     var isObstacle: Boolean = false
@@ -47,11 +45,11 @@ class Tile(
     @Override
     override fun toString(): String {
         return "RenderPos (" + renderPos.x + ";" + renderPos.y + ")" +
-                "\nGlobalIndex:" + index.toString() + "\nTextureID:(" + textureID + ")"
+                "\nGlobalIndex:" + index.toString() + "\nTextureID:(" + textureID + ")+\n ContainsInstance: "+containsInstance.toString()
     }
 
     fun getCenter():Vector2{
-        return Vector2(renderPos.x+TILESIZE/2,renderPos.y+58*TILESIZE/128)
+        return Vector2(renderPos.x+TILESIZE/2,renderPos.y+TILESIZE/4+44)
     }
 
     override fun compareTo(other: Drawable): Int {

@@ -1,0 +1,22 @@
+package com.rgl.game.graphics
+
+enum class MonsterSprites(var id:Byte){
+    SKELETON_IDLE1(1),
+    SKELETON_IDLE2(2),
+    SKELETON_IDLE3(3),
+    SKELETON_WALK1(4),
+    SKELETON_WALK2(5),
+    SKELETON_WALK3(6),
+    GOLEM_IDLE1(7),
+    GOLEM_IDLE2(8),
+    GOLEM_IDLE3(9),
+    GOLEM_WALK1(10),
+    GOLEM_WALK2(11),
+    GOLEM_WALK3(12),
+    GOBLIN_IDLE1(13),
+    GOBLIN_IDLE2(14),
+    GOBLIN_IDLE3(15),
+    GOBLIN_WALK1(16),
+    GOBLIN_WALK2(17),
+    GOBLIN_WALK3(18)
+}

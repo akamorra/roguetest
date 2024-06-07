@@ -20,19 +20,10 @@ data class Room(var width: Int, var height: Int) {
 
     fun getSrc() = src
 
-    fun print() {
-        for (it in src) {
-            for (it1 in it) {
-                System.out.print(it1.renderPos.toString())
-            }
-            System.out.println()
-        }
-    }
-
     fun getNextRandom(w: Int,h: Int) : Room {
         width = Random.nextInt(2, w) + w
         height = Random.nextInt(2,h) + h
-        var temp:Room=Room(width,height)
+        val temp =Room(width,height)
         temp.fill()
         return temp
     }
@@ -42,7 +33,7 @@ data class Room(var width: Int, var height: Int) {
         if(Textures.listOfTransparents.contains(src[0][src[0].lastIndex].textureID)) src[0][src[0].lastIndex].textureID=Textures.STONEWALL_TRANSPARENT.id
         if(Textures.listOfTransparents.contains(src[src.lastIndex][0].textureID)) src[src.lastIndex][0].textureID=Textures.STONEWALL_TRANSPARENT.id
         if(Textures.listOfTransparents.contains(src[src.lastIndex][src[0].lastIndex].textureID)) src[src.lastIndex][src[0].lastIndex].textureID=Textures.STONEWALL_TRANSPARENT.id
-        for(i in 0..<src.size-1) if (Textures.listOfWalkable.contains(src[0][i].textureID)) {
+        for(i in 0..<src.size-1) if (Textures.listOfWalkable.contains(src[i][0].textureID)) {
             if (Textures.listOfTransparents.contains(src[0][i-1].textureID))src[i+1][0].textureID=Textures.STONEWALL_TRANSPARENT.id
         }
         for(i in 0..<src[0].size-1) if (Textures.listOfWalkable.contains(src[0][i].textureID)){
@@ -104,10 +95,10 @@ data class Room(var width: Int, var height: Int) {
     }
 
     fun getDoor(room:Room):Tile{
-        var connectToCenter = room.getCenter()
-        var minusX = center.x < connectToCenter.x
-        var minusY = center.y < connectToCenter.y
-        var direction: Int = 0
+        val connectToCenter = room.getCenter()
+        val minusX = center.x < connectToCenter.x
+        val minusY = center.y < connectToCenter.y
+        var direction = 0
         if (minusX && minusY) direction = 2
         if (!minusX && minusY) direction = 1
         if (!minusX && !minusY) direction = 3
@@ -145,11 +136,11 @@ data class Room(var width: Int, var height: Int) {
         return door
     }
     fun makeDoor(room: Room) {
-        var pointer: Int = 0
-        var connectToCenter = room.getCenter()
-        var minusX = center.x < connectToCenter.x
-        var minusY = center.y < connectToCenter.y
-        var direction: Int = 0
+        val pointer: Int
+        val connectToCenter = room.getCenter()
+        val minusX = center.x < connectToCenter.x
+        val minusY = center.y < connectToCenter.y
+        var direction = 0
         if (minusX && minusY) direction = 2
         if (!minusX && minusY) direction = 1
         if (!minusX && !minusY) direction = 3

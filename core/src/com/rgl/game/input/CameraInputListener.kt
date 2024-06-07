@@ -29,7 +29,7 @@ class CameraInputListener(camera: OrthographicCamera) : GestureListener {
     override fun pan(x: Float, y: Float, deltaX: Float, deltaY: Float): Boolean {
         cam.translate(-deltaX * cam.zoom * 0.8f, deltaY * cam.zoom * 0.8f, 0.0f)
         cam.update()
-        return false
+        return true
     }
 
     override fun panStop(x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -40,14 +40,17 @@ class CameraInputListener(camera: OrthographicCamera) : GestureListener {
         if (cam.zoom <= MapCFG.MAXZOOM && initialDistance < distance && cam.zoom > MapCFG.MINZOOM) {
             cam.zoom -= (distance - initialDistance) / 10000
             cam.update()
+            return true
         }
         if (cam.zoom >= MapCFG.MINZOOM && initialDistance > distance && cam.zoom <= MapCFG.MAXZOOM) {
             cam.zoom += (initialDistance - distance) / 10000
             cam.update()
+            return true
         }
         if (cam.zoom > MapCFG.MAXZOOM || cam.zoom < MapCFG.MINZOOM) {
             cam.zoom = round(cam.zoom)
             cam.update()
+            return true
         }
         return false
     }

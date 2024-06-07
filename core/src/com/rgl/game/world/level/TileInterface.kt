@@ -6,5 +6,4 @@ interface TileInterface {
     val renderPos: Vector2
     val textureID: Byte
     val index: Tile.Index
-    //val containsEntity:Entity;
 }

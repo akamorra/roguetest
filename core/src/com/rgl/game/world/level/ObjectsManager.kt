@@ -10,19 +10,19 @@ class ObjectsManager {
     //dispose
     private var listOfItems = mutableMapOf<String, Item>()
 
-    fun getItem(key:String):Item?{
+    fun getItem(key: String): Item? {
         return listOfItems.get(key)
     }
 
-    fun addItem(item:Item){
-        listOfItems.put(item.key!!,item)
+    fun addItem(item: Item) {
+        listOfItems.put(item.key!!, item)
     }
 
-    fun destroyItem(item: Item){
-        listOfItems.remove(item.key,item)
+    fun destroyItem(key: String) {
+        listOfItems.remove(key)
     }
 
-    fun getList(): MutableMap<String, Item>{
+    fun getList(): MutableMap<String, Item> {
         return listOfItems
     }
 }

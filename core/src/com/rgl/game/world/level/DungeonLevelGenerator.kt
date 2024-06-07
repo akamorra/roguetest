@@ -8,8 +8,6 @@ import com.rgl.game.world.MapCFG
 import com.rgl.game.world.MapCFG.MAPSIZE
 import com.rgl.game.world.MapCFG.MULTIPLIER
 import com.rgl.game.world.MapCFG.ROOMSIZE
-import com.rgl.game.world.level.Level.objectsManager
-import com.rgl.game.world.level.Level.update
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -21,6 +19,7 @@ object DungeonLevelGenerator {
     private var pointerX: Int = 0
     private var pointerY: Int = 0
     private var itemsGenerator = ItemsGenerator()
+    private var monsterSpawner = MonstersSpawner()
     private var data: Array<Array<Tile>> =
         Array(1) {
             Array(1) {
@@ -38,18 +37,64 @@ object DungeonLevelGenerator {
     private var breakFlag: Boolean = false
     private var weightMap: Array<Array<Int>> = Array(1) { Array(1) { 1 } }
 
-    fun getDungeonLevel(rooms: Int): Array<Array<Tile>> {
+    fun getSpawnPoint(): Tile.Index {
+        val rand = Random.nextInt(0, listOfRooms.count())
+        val row =
+            Random.nextInt(3, graphOfRooms.get(rand.toString())!!.room.getSrc().count() - 1) - 1
+        val col = Random.nextInt(
+            3,
+            graphOfRooms.get(rand.toString())!!.room.getSrc()[row].count() - 1
+        ) - 1
+        graphOfRooms[rand.toString()]!!.isSpawnPoint = true
+        return graphOfRooms[rand.toString()]!!.room.getSrc()[row][col].index
+    }
+
+    fun getEndPoint(): Tile.Index {
+        var flag = true
+        while (flag) {
+            val rand = Random.nextInt(0, listOfRooms.count())
+            if (!graphOfRooms[rand.toString()]!!.isSpawnPoint) {
+                val row =
+                    Random.nextInt(
+                        4,
+                        graphOfRooms.get(rand.toString())!!.room.getSrc().count() + 1
+                    ) - 2
+                val col = Random.nextInt(
+                    4,
+                    graphOfRooms.get(rand.toString())!!.room.getSrc()[row].count() + 1
+                ) - 2
+                graphOfRooms[rand.toString()]!!.room.getSrc()[row][col].index
+                graphOfRooms[rand.toString()]!!.isEndPoint = true
+                return graphOfRooms[rand.toString()]!!.room.getSrc()[row][col].index
+            }
+        }
+        return Tile.Index(0, 0)
+    }
+
+
+    fun getDungeonLevel(rooms: Int, lvl: Level): Array<Array<Tile>> {
         clearData()
         addRooms(rooms)
         setIndexes()
         setRenderPoses()
         setCenters()
         addToGraph()
-
         Thread {
-            makeConnections()
+            makeConnections(lvl)
         }.start()
-        itemsGenerator.generate(MapCFG.ROOMCOUNT*3,MapCFG.ROOMCOUNT*3/2, objectsManager,1, graphOfRooms)
+        itemsGenerator.generate(
+            MapCFG.ROOMCOUNT,
+            MapCFG.ROOMCOUNT,
+            lvl.objectsManager,
+            graphOfRooms
+        )
+        monsterSpawner.generate(
+            MapCFG.ROOMCOUNT,
+            lvl.monstersManager,
+            graphOfRooms,
+            lvl.player,
+            lvl
+        )
         prepare()
         return data
     }
@@ -76,6 +121,16 @@ object DungeonLevelGenerator {
 
     //erases array before making a new level
     private fun clearData() {
+        listOfRooms = ArrayList()
+        graphOfRooms = Graph()
+        spawned = false
+        breakFlag = false
+        renderPos = Vector2(0.0f, 0.0f)
+        pointer = 0
+        pointerX = 0
+        pointerY = 0
+        itemsGenerator = ItemsGenerator()
+        monsterSpawner = MonstersSpawner()
         data = Array(MAPSIZE) {
             Array(MAPSIZE) {
                 Tile(
@@ -86,21 +141,12 @@ object DungeonLevelGenerator {
                 )
             }
         }
+        weightMap = Array(MAPSIZE) { Array(MAPSIZE) { 0 } }
         for (it in data) {
             for (it1 in it) {
                 it1.isObstacle = false
             }
         }
-        weightMap = Array(MAPSIZE) {
-            Array(MAPSIZE) {
-                (0)
-            }
-        }
-    }
-
-    //debug output to terminal
-    private fun print() {
-        for (it in listOfRooms) println(it.toString())
     }
 
     //making doors for every room towards its neighbor rooms
@@ -204,23 +250,21 @@ object DungeonLevelGenerator {
     }
 
     //making doors&&making corridors between connected rooms
-    private fun makeConnections() {
+    private fun makeConnections(lvl: Level) {
         graphOfRooms.check()
         graphOfRooms.get().forEach {
             graphOfRooms.neighbors(it.key).forEach { it2 ->
                 it.value.room.makeDoor(it2.room)
-                update()
+                lvl.update()
             }
         }
-
         setObstacles()
-        println("Start")
-        makeCorridors()
+        makeCorridors(lvl)
+        makeCorridors(lvl)
         graphOfRooms.get().forEach {
-           it.value.room.fillW()
+            it.value.room.fillW()
         }
-        update()
-        println("End")
+        lvl.update()
     }
 
     //fill weights map
@@ -235,25 +279,18 @@ object DungeonLevelGenerator {
     }
 
     //making corridors using weight map
-    private fun makeCorridors() {
+    private fun makeCorridors(lvl: Level) {
 
         graphOfRooms.get().forEach { vertex ->
             graphOfRooms.neighbors(vertex.key).forEach { ngb ->
                 if (ngb.edgesList.contains(Graph.Vertex.edge(vertex.value, ngb))) {
-
                     val start = vertex.value.room.getDoor(ngb.room)
                     val end = ngb.room.getDoor(vertex.value.room)
                     val path = path(start, end)
-                    /*println("start:" + start.index.toString() + "  end:" + end.index.toString())
-                    println(path.first().index.toString() + " " + path.last().index.toString())
-                    path.forEach { it ->
-                        print("->" + it.index.toString())
-                    }*/
-
                     path.forEach { it ->
 
                         it.isDrawable = true
-                        it.textureID = (Random.nextInt(123,127)).toByte()
+                        it.textureID = (Random.nextInt(123, 127)).toByte()
                         it.isObstacle = false
                         if (data[it.index.x + 1][it.index.y + 1].isObstacle)
                             data[it.index.x + 1][it.index.y + 1].textureID =
@@ -276,15 +313,10 @@ object DungeonLevelGenerator {
                     }
 
                 }
-                ngb.edgesList.remove(Graph.Vertex.edge(ngb,vertex.value))
-                vertex.value.edgesList.remove(Graph.Vertex.edge(ngb,vertex.value))
-
-                update()
-                println()
-                //System.out.println(start.index.toString() + "#######" + end.index.toString())
-                println()
-
-                update()
+                ngb.edgesList.remove(Graph.Vertex.edge(ngb, vertex.value))
+                vertex.value.edgesList.remove(Graph.Vertex.edge(ngb, vertex.value))
+                lvl.update()
+                lvl.update()
 
             }
         }
@@ -301,14 +333,14 @@ object DungeonLevelGenerator {
         val closedSet: MutableSet<Tile.Index> = mutableSetOf()
         var path: MutableSet<Tile> = mutableSetOf()
         var neighbors: MutableSet<Tile.Index>
-        var neighborsUnexplored: MutableSet<Tile.Index> = mutableSetOf()
+        var neighborsUnexplored: MutableSet<Tile.Index>
         openSet.add(start.index)
         currentNode = start.index
         while (openSet.isNotEmpty()) {
 
             neighbors = mutableSetOf()
             openSet.forEach {
-                var min2 = sqrt(
+                val min2 = sqrt(
                     (end.index.x - it.x).toDouble().pow(2) + (end.index.y - it.y).toDouble()
                         .pow(2) + weightMap[it.x][it.y]
                 )

@@ -1,30 +1,32 @@
 package com.rgl.game.world
 
+import com.rgl.game.world.game_objects.drawable.player.Player
 import com.rgl.game.world.level.Level
-import com.rgl.game.world.level.Tile
 
 //World - Singleton класс для хранения данных текущего игрового мира
 object World {
-    private val data = mutableListOf<Array<Array<Tile>>>()
-
-    fun getWorld(): MutableList<Array<Array<Tile>>> {
+    private val data = mutableListOf<Level>()
+    var CURRENTLVL:Int =0
+    fun getWorld(): MutableList<Level> {
         return data
     }
 
-    fun getLevel(): Array<Array<Tile>> {
-        Level.set(data[data.lastIndex])
-        return Level.get()
+    fun getLevel(): Level {
+
+        return data.last()
     }
 
-    fun addLevel() {
-        data.add(Level.getNew(MapCFG.ROOMCOUNT))
+    fun addLevel(player: Player) {
+        var lvl = Level(player)
+        data.add(lvl.getNew(MapCFG.ROOMCOUNT))
     }
 
-    fun loadSaved(seed: String) { //Загрузка сохраненного мира и
+    fun loadSaved(UUID: String) { //Загрузка сохраненного мира и
 
     }
 
     fun clear() {
         data.clear()
+        CURRENTLVL=0
     }
 }

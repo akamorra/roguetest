@@ -10,12 +10,13 @@ enum class Textures(val id: Byte) {
     STONEWALL_TRANSPARENT_E(120),
     STONEWALL_TRANSPARENT(119),
     STONEWALL_TOP_TRANSPARENT(118),
+    END_GATE(103),
     EMPTY_TEXTURE(127);
     companion object {
         val listOfObstacles:Set<Byte> = setOf(122,121,120,119,118)
         val listOfWalls:Set<Byte> =setOf(122,121,120,119,118)
         val listOfTransparents:Set<Byte> = setOf(121,120,119,118)
-        val listOfWalkable:Set<Byte> = setOf(126,125,124,123)
+        val listOfWalkable:Set<Byte> = setOf(126,125,124,123,103)
     }
 
 }

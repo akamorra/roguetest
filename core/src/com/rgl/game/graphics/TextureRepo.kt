@@ -43,7 +43,8 @@ object TextureRepo {
                 TEXTURESIZE,
                 TEXTURESIZE * 2
             ), //wall transparent full
-            TextureRegion(atlas_texture, 1, 1, 1, 1)//empty
+            TextureRegion(atlas_texture, 1, 1, 1, 1),//empty
+            TextureRegion(atlas_texture, TEXTURESIZE*3, 0, TEXTURESIZE, TEXTURESIZE*2),
         )
     )
 
@@ -51,6 +52,10 @@ object TextureRepo {
     private val gui_region: ArrayList<TextureRegion> = ArrayList(
         listOf(
             TextureRegion(gui_texture, 32, 544, 320, 240),
+            TextureRegion(gui_texture,28,0,904,512),
+            TextureRegion(gui_texture,32,832,128,32),
+            TextureRegion(gui_texture,32,896,360,128),
+            TextureRegion(gui_texture,192,800,64,64)
         )
     )
 
@@ -77,9 +82,9 @@ object TextureRepo {
             TextureRegion(items_texture, TEXTURESIZE*2, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE),
 
             TextureRegion(items_texture, TEXTURESIZE, TEXTURESIZE*8, TEXTURESIZE, TEXTURESIZE),
-            TextureRegion(items_texture, 0, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE),
-            TextureRegion(items_texture, TEXTURESIZE, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE),
             TextureRegion(items_texture, TEXTURESIZE*3, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*4, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*5, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE),
 
             TextureRegion(items_texture, TEXTURESIZE*9, 0, TEXTURESIZE, TEXTURESIZE),
             TextureRegion(items_texture, TEXTURESIZE*9, TEXTURESIZE, TEXTURESIZE, TEXTURESIZE),
@@ -92,9 +97,71 @@ object TextureRepo {
         )
     )
 
+    private val player_region:ArrayList<TextureRegion> = ArrayList(
+        listOf(
+            TextureRegion(atlas_texture, TEXTURESIZE*7, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*8, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*9, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE*2),
+
+            TextureRegion(atlas_texture, TEXTURESIZE*7, 0, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*8, 0, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*9, 0, TEXTURESIZE, TEXTURESIZE*2)
+
+        )
+    )
+    private val monsters_region:ArrayList<TextureRegion> = ArrayList(
+        listOf(
+            TextureRegion(atlas_texture, TEXTURESIZE*7, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*8, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*9, TEXTURESIZE*6, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*7, TEXTURESIZE*4, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*8, TEXTURESIZE*4, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*9, TEXTURESIZE*4, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*4, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*5, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*6, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*4, 0, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*5, 0, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*6, 0, TEXTURESIZE, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*1, TEXTURESIZE*8, TEXTURESIZE*2, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*3, TEXTURESIZE*8, TEXTURESIZE*2, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*5, TEXTURESIZE*8, TEXTURESIZE*2, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*1, TEXTURESIZE*6, TEXTURESIZE*2, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*3, TEXTURESIZE*6, TEXTURESIZE*2, TEXTURESIZE*2),
+            TextureRegion(atlas_texture, TEXTURESIZE*5, TEXTURESIZE*6, TEXTURESIZE*2, TEXTURESIZE*2)
+
+        )
+    )
+    fun getMonsterTexture(id:Byte):TextureRegion=
+        when(id){
+            MonsterSprites.SKELETON_IDLE1.id-> monsters_region[0]
+            MonsterSprites.SKELETON_IDLE2.id-> monsters_region[1]
+            MonsterSprites.SKELETON_IDLE3.id->monsters_region[2]
+            MonsterSprites.SKELETON_WALK1.id->monsters_region[3]
+            MonsterSprites.SKELETON_WALK2.id->monsters_region[4]
+            MonsterSprites.SKELETON_WALK3.id->monsters_region[5]
+            MonsterSprites.GOBLIN_IDLE1.id->monsters_region[6]
+            MonsterSprites.GOBLIN_IDLE2.id->monsters_region[7]
+            MonsterSprites.GOBLIN_IDLE3.id->monsters_region[8]
+            MonsterSprites.GOBLIN_WALK1.id->monsters_region[9]
+            MonsterSprites.GOBLIN_WALK2.id->monsters_region[10]
+            MonsterSprites.GOBLIN_WALK3.id->monsters_region[11]
+            MonsterSprites.GOLEM_IDLE1.id->monsters_region[12]
+            MonsterSprites.GOLEM_IDLE2.id->monsters_region[13]
+            MonsterSprites.GOLEM_IDLE3.id->monsters_region[14]
+            MonsterSprites.GOLEM_WALK1.id->monsters_region[15]
+            MonsterSprites.GOLEM_WALK2.id->monsters_region[16]
+            MonsterSprites.GOLEM_WALK3.id->monsters_region[17]
+            else -> items_region[0]
+        }
+
     fun getGui(name: String): TextureRegion =
         when (name) {
             GuiName.INSPECT._name -> gui_region[0]
+            GuiName.INVENTORY._name -> gui_region[1]
+            GuiName.HEALTH_BAR._name -> gui_region[2]
+            GuiName.START_BUTTON._name -> gui_region[3]
+            GuiName.SKIP_BUTTON._name -> gui_region[4]
             else -> gui_region[0]
         }
 
@@ -115,9 +182,21 @@ object TextureRepo {
             Textures.STONEWALL_TRANSPARENT_E.id -> atlasRegion[6]
             Textures.STONEWALL_TRANSPARENT.id -> atlasRegion[7]
             Textures.EMPTY_TEXTURE.id -> atlasRegion[8]
+            Textures.END_GATE.id -> atlasRegion[9]
             else -> {
                 getItemTexture(id)
             }
+        }
+
+    fun getPlayerTexture(id:Byte):TextureRegion=
+        when (id) {
+            PlayerSprites.IDLE1.id -> player_region[0]
+            PlayerSprites.IDLE2.id -> player_region[1]
+            PlayerSprites.IDLE3.id -> player_region[2]
+            PlayerSprites.WALK1.id -> player_region[3]
+            PlayerSprites.WALK2.id -> player_region[4]
+            PlayerSprites.WALK3.id -> player_region[5]
+            else -> items_region[0]
         }
 
     fun getItemTexture(id: Byte): TextureRegion =
