@@ -3,6 +3,7 @@ package com.rgl.game.input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
+import com.rgl.game.gui.Inventory
 import com.rgl.game.world.MapCFG
 import kotlin.math.round
 
@@ -27,9 +28,11 @@ class CameraInputListener(camera: OrthographicCamera) : GestureListener {
     }
 
     override fun pan(x: Float, y: Float, deltaX: Float, deltaY: Float): Boolean {
+        if(!Inventory.isDrawable){
         cam.translate(-deltaX * cam.zoom * 0.8f, deltaY * cam.zoom * 0.8f, 0.0f)
         cam.update()
-        return true
+        return true}
+        return false
     }
 
     override fun panStop(x: Float, y: Float, pointer: Int, button: Int): Boolean {

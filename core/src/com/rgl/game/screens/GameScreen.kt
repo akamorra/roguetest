@@ -48,9 +48,10 @@ class GameScreen(val game: Main) : Screen {
         camera.setToOrtho(false, MapCFG.VIEWPORTWIDTH.toFloat(), MapCFG.VIEWPORTHEIGHT.toFloat())
 
         inputMultiplexer = InputMultiplexer()
-        inputMultiplexer.addProcessor(GestureDetector(guiInputListener))
         inputMultiplexer.addProcessor(GestureDetector(inventoryButtonListener))
         inputMultiplexer.addProcessor(GestureDetector(skipButtonListener))
+        inputMultiplexer.addProcessor(GestureDetector(guiInputListener))
+
         inputMultiplexer.addProcessor(GestureDetector(cameraInputListener))
         inputMultiplexer.addProcessor(GestureDetector(worldInputListener))
         Gdx.input.inputProcessor = inputMultiplexer
