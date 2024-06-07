@@ -47,6 +47,9 @@ class Player : Turning(), Drawable, HasArmor, HasAttack, HasHP {
     private var font: BitmapFont = BitmapFont()
     var destination: Tile? = null
 
+    fun getInventory():MutableMap<String, Item>{
+        return inventory
+    }
     init {
         BASE_HP = 10
         BASE_ARMOR = 0
@@ -236,7 +239,7 @@ class Player : Turning(), Drawable, HasArmor, HasAttack, HasHP {
     fun pickUp(lvl: Level) {
         if (inventory.count()<18) {
             lvl.objectsManager.getList().forEach {
-                if (it.value.index.x == this.index.x && it.value.index.y == this.index.y) {
+                if (it.value.index.x == this.index.x && it.value.index.y == this.index.y && inventory.count()<14) {
                     inventory.put(it.key, it.value)
                     it.value.isPickedUP = true
                     lvl.listOfDrawable.remove(it.value)

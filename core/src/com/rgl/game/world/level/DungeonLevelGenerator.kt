@@ -83,8 +83,8 @@ object DungeonLevelGenerator {
             makeConnections(lvl)
         }.start()
         itemsGenerator.generate(
-            MapCFG.ROOMCOUNT,
-            MapCFG.ROOMCOUNT,
+            MapCFG.ROOMCOUNT*5,
+            MapCFG.ROOMCOUNT*5,
             lvl.objectsManager,
             graphOfRooms
         )

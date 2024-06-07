@@ -10,6 +10,7 @@ import com.rgl.game.Main
 import com.rgl.game.graphics.Textures
 import com.rgl.game.gui.GuiInspect.render
 import com.rgl.game.gui.Inventory.render
+import com.rgl.game.gui.InventoryButton
 import com.rgl.game.gui.SkipTurnButton
 import com.rgl.game.input.CameraInputListener
 import com.rgl.game.input.GuiInputListener
@@ -33,6 +34,7 @@ class GameScreen(val game: Main) : Screen {
     private lateinit var guiInputListener: GuiInputListener
     private var inputMultiplexer: InputMultiplexer = InputMultiplexer()
     private lateinit var skipButtonListener: SkipButtonInput
+    private lateinit var inventoryButtonListener: InventoryButtonInput
 
     init {
         World.addLevel(player)
@@ -42,10 +44,12 @@ class GameScreen(val game: Main) : Screen {
         worldInputListener = WorldInputListener(camera, batch, currentLevel, player)
         guiInputListener = GuiInputListener(uicamera)
         skipButtonListener = SkipButtonInput(uicamera, player)
+        inventoryButtonListener = InventoryButtonInput(uicamera, player)
         camera.setToOrtho(false, MapCFG.VIEWPORTWIDTH.toFloat(), MapCFG.VIEWPORTHEIGHT.toFloat())
 
         inputMultiplexer = InputMultiplexer()
         inputMultiplexer.addProcessor(GestureDetector(guiInputListener))
+        inputMultiplexer.addProcessor(GestureDetector(inventoryButtonListener))
         inputMultiplexer.addProcessor(GestureDetector(skipButtonListener))
         inputMultiplexer.addProcessor(GestureDetector(cameraInputListener))
         inputMultiplexer.addProcessor(GestureDetector(worldInputListener))
@@ -78,6 +82,7 @@ class GameScreen(val game: Main) : Screen {
         render(batch, uicamera)
         render(batch, uicamera, player)
         SkipTurnButton.render(batch, uicamera)
+        InventoryButton.render(batch, uicamera)
         batch.end()
         if (player.HP <= 0) {
             game.screen = game.endgame

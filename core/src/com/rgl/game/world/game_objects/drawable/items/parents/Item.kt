@@ -3,6 +3,8 @@ package com.rgl.game.world.game_objects.drawable.items.parents
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
 import com.rgl.game.graphics.TextureRepo
+import com.rgl.game.world.MapCFG.ITEM_INVENTORY_HEIGHT
+import com.rgl.game.world.MapCFG.ITEM_INVENTORY_WIDTH
 import com.rgl.game.world.MapCFG.ITEM_ONMAP_SIZE
 import com.rgl.game.world.game_objects.Drawable
 import com.rgl.game.world.level.Tile
@@ -11,6 +13,10 @@ import java.util.UUID
 open abstract class Item : ItemInterface, Drawable {
     override fun render(batch: Batch, x: Float, y: Float) {
         batch.draw(TextureRepo.getItemTexture(textureID),renderPos.x,renderPos.y,ITEM_ONMAP_SIZE,ITEM_ONMAP_SIZE)
+    }
+    fun renderInv(batch: Batch, x: Float, y: Float) {
+        batch.draw(TextureRepo.getItemTexture(textureID),renderPos.x,renderPos.y,
+            ITEM_INVENTORY_WIDTH, ITEM_INVENTORY_HEIGHT)
     }
 
     private val requiresStrength: Float = 0.0f

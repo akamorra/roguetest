@@ -10,14 +10,16 @@ import com.rgl.game.graphics.TextureRepo
 import com.rgl.game.world.MapCFG
 import com.rgl.game.world.MapCFG.INVENTORY_GUI_HEIGHT
 import com.rgl.game.world.MapCFG.INVENTORY_GUI_WIDTH
+import com.rgl.game.world.MapCFG.ITEM_INVENTORY_SCALE_WIDTH
+import com.rgl.game.world.game_objects.drawable.items.parents.Item
 import com.rgl.game.world.game_objects.drawable.player.Player
 
 object Inventory{
     private var tempV3:Vector3 = Vector3(0.0f,0.0f,0.0f)
     private var renderPos: Vector2 =Vector2(0.0f,0.0f)
-    private var isDrawable=false
+    var isDrawable=false
     private var font: BitmapFont = BitmapFont()
-
+    private var inventoryGrid:Array<Array<Item?>> =Array(2){Array(7){ null } }
     fun render(batch: Batch, camera: OrthographicCamera, player: Player) {
         tempV3 =camera.unproject(Vector3((0).toFloat(),(MapCFG.VIEWPORTHEIGHT).toFloat(),0.0f))
         renderPos =Vector2(tempV3.x, MapCFG.VIEWPORTHEIGHT - tempV3.y)
@@ -59,6 +61,15 @@ object Inventory{
         font.data.setScale(2.0f)
         font.draw(batch,"LEVEL: "+player.Level+" Progress: "+player.currentProgress+"/"+player.requiresProgress,
             renderPos.x+ (INVENTORY_GUI_WIDTH/5*3) * MapCFG.INVENTORY_GUI_SCALE, renderPos.y-80+ MapCFG.VIEWPORTHEIGHT-(INVENTORY_GUI_HEIGHT/6+8))
+        updateInventoryArray(player)
+        for (i in 0..1){
+            for (j in 0..<inventoryGrid[0].size){
+                if (inventoryGrid[i][j]!=null) {
+                    inventoryGrid[i][j]!!.renderPos = Vector2(renderPos.x+(j+1)*84*ITEM_INVENTORY_SCALE_WIDTH+23*(j)*ITEM_INVENTORY_SCALE_WIDTH, renderPos.y+(1-i)*144* MapCFG.ITEM_INVENTORY_SCALE_HEIGHT+i*36* MapCFG.ITEM_INVENTORY_SCALE_HEIGHT)
+                    inventoryGrid[i][j]!!.renderInv(batch, inventoryGrid[i][j]!!.renderPos.x, inventoryGrid[i][j]!!.renderPos.y)
+                }
+            }
+        }
 
     }
     fun hide(){
@@ -66,5 +77,20 @@ object Inventory{
     }
     fun show(){
         isDrawable =true
+    }
+    fun updateInventoryArray(player:Player){
+        player.getInventory().forEach {
+            for (j in 0..1) {
+                for (i in 0..<inventoryGrid[j].size) {
+                    if (inventoryGrid[j][i] == null && !inventoryGrid[0].contains(it.value) && !inventoryGrid[1].contains(
+                            it.value
+                        )
+                    ) {
+                        inventoryGrid[j][i] = it.value
+                        break
+                    }
+                }
+            }
+        }
     }
 }
