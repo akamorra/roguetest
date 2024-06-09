@@ -7,6 +7,7 @@ import com.rgl.game.world.game_objects.drawable.items.Mace
 import com.rgl.game.world.game_objects.drawable.items.Pot
 import com.rgl.game.world.game_objects.drawable.items.Scroll
 import com.rgl.game.world.game_objects.drawable.items.Sword
+import com.rgl.game.world.game_objects.drawable.player.Player
 import kotlin.random.Random
 
 class ItemsGenerator {
@@ -16,7 +17,7 @@ class ItemsGenerator {
         equipmentAmount: Int,
         consumablesAmount: Int,
         objectsManager: ObjectsManager,
-        graph: Graph
+        graph: Graph, player: Player
     ) {
         var setofspawned: MutableSet<Tile.Index> = mutableSetOf()
         var amountWeapons = Random.nextInt(0, equipmentAmount + 1)
@@ -29,18 +30,28 @@ class ItemsGenerator {
         for (i in 1..amountWeapons) {
             rand = Random.nextInt(1, 4)
             when (rand) {
-                1 -> objectsManager.addItem(Sword())
-                2 -> objectsManager.addItem(Mace())
-                3 -> objectsManager.addItem(Axe())
+                1 -> {
+                    objectsManager.addItem(Sword(player.Level))
+                }
+                2 -> {
+                    objectsManager.addItem(Mace(player.Level))
+                }
+                3 -> {
+                    objectsManager.addItem(Axe(player.Level))
+                }
                 else -> objectsManager.addItem(Scroll())
             }
         }
         for (i in 1..amountArmor) {
             rand = Random.nextInt(1, 3)
             when (rand) {
-                1 -> objectsManager.addItem(Chestplate())
-                2 -> objectsManager.addItem(Boots())
-                else -> objectsManager.addItem(Sword())
+                1 -> {
+                    objectsManager.addItem(Chestplate(player.Level))
+                }
+                2 -> {
+                    objectsManager.addItem(Boots(player.Level))
+                }
+                else -> objectsManager.addItem(Sword(player.Level))
             }
         }
         for (i in 1..amountPots) {

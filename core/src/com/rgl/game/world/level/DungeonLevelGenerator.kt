@@ -38,15 +38,22 @@ object DungeonLevelGenerator {
     private var weightMap: Array<Array<Int>> = Array(1) { Array(1) { 1 } }
 
     fun getSpawnPoint(): Tile.Index {
-        val rand = Random.nextInt(0, listOfRooms.count())
-        val row =
-            Random.nextInt(3, graphOfRooms.get(rand.toString())!!.room.getSrc().count() - 1) - 1
-        val col = Random.nextInt(
-            3,
-            graphOfRooms.get(rand.toString())!!.room.getSrc()[row].count() - 1
-        ) - 1
-        graphOfRooms[rand.toString()]!!.isSpawnPoint = true
-        return graphOfRooms[rand.toString()]!!.room.getSrc()[row][col].index
+        var flag=true
+        do {
+            val rand = Random.nextInt(0, listOfRooms.count())
+            val row =
+                Random.nextInt(3, graphOfRooms.get(rand.toString())!!.room.getSrc().count() - 1) - 1
+            val col = Random.nextInt(
+                3,
+                graphOfRooms.get(rand.toString())!!.room.getSrc()[row].count() - 1
+            ) - 1
+            if(!graphOfRooms[rand.toString()]!!.room.getSrc()[row][col].containsInstance) {
+                graphOfRooms[rand.toString()]!!.isSpawnPoint = true
+                return graphOfRooms[rand.toString()]!!.room.getSrc()[row][col].index
+                flag=false
+            }
+        } while(flag)
+        return Tile.Index(0, 0)
     }
 
     fun getEndPoint(): Tile.Index {
@@ -83,10 +90,10 @@ object DungeonLevelGenerator {
             makeConnections(lvl)
         }.start()
         itemsGenerator.generate(
-            MapCFG.ROOMCOUNT*5,
-            MapCFG.ROOMCOUNT*5,
+            MapCFG.ROOMCOUNT*8,
+            MapCFG.ROOMCOUNT*8,
             lvl.objectsManager,
-            graphOfRooms
+            graphOfRooms, lvl.player
         )
         monsterSpawner.generate(
             MapCFG.ROOMCOUNT,

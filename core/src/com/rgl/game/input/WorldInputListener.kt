@@ -27,6 +27,31 @@ class WorldInputListener(val camera: OrthographicCamera, val batch: SpriteBatch,
 
     override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
         tapPos = camera.unproject(Vector3(x, y, 0.0f))
+        lvl.monstersManager.getList().forEach{
+            if ((it.value.renderPos.x + it.value.MONSTER_WIDTH/2 - tapPos.x).pow(2) / (it.value.MONSTER_WIDTH/2).pow(
+                    2
+                ) + (it.value.renderPos.y + it.value.MONSTER_HEIGHT/2 - tapPos.y).pow(
+                    2
+                ) / (it.value.MONSTER_HEIGHT/2).pow(2) < 1
+            ) {
+                if(selectedTile==null){selectedTile=lvl.get()[it.value.index.x][it.value.index.y]}
+                else{
+                    selectedTile2=lvl.get()[it.value.index.x][it.value.index.y]
+                    if(selectedTile!!.index==selectedTile2!!.index){
+
+                        player.moveTo(selectedTile2!!,lvl)
+                        selectedTile=null
+                        selectedTile2=null
+                    } else {
+                        selectedTile=selectedTile2
+                        selectedTile2=null
+                    }
+                }
+                GuiInspect.show("ObjectHash:"+it.value.hashCode(),"Monster:",it.value.toString(),it.value.textureID)
+
+                return true
+            }
+        }
         lvl.objectsManager.getList().forEach {
             if ((it.value.renderPos.x + MapCFG.ITEM_ONMAP_SIZE / 2 - tapPos.x).pow(2) / (MapCFG.ITEM_ONMAP_SIZE / 2).pow(
                     2

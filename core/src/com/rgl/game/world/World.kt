@@ -1,5 +1,6 @@
 package com.rgl.game.world
 
+import com.rgl.game.gui.Inventory
 import com.rgl.game.world.game_objects.drawable.player.Player
 import com.rgl.game.world.level.Level
 
@@ -27,6 +28,7 @@ object World {
 
     fun clear() {
         data.clear()
+        Inventory.clear()
         CURRENTLVL=0
     }
 }

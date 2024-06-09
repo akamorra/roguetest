@@ -21,12 +21,11 @@ import com.rgl.game.world.game_objects.drawable.player.Player
 import com.rgl.game.world.level.Level
 import com.rgl.game.world.level.Tile
 
-class GameScreen(val game: Main) : Screen {
+class GameScreen(val game: Main, val player: Player) : Screen {
     private var end: Boolean = false
     private val batch = game.batch
     private val camera = game.camera
     private val uicamera = game.uicamera
-    private val player = Player()
     private var deltatime = 0.0f
     private lateinit var currentLevel: Level
     private lateinit var cameraInputListener: CameraInputListener
@@ -42,7 +41,7 @@ class GameScreen(val game: Main) : Screen {
         uicamera.setToOrtho(false, MapCFG.VIEWPORTWIDTH.toFloat(), MapCFG.VIEWPORTHEIGHT.toFloat())
         cameraInputListener = CameraInputListener(camera)
         worldInputListener = WorldInputListener(camera, batch, currentLevel, player)
-        guiInputListener = GuiInputListener(uicamera)
+        guiInputListener = GuiInputListener(uicamera, player)
         skipButtonListener = SkipButtonInput(uicamera, player)
         inventoryButtonListener = InventoryButtonInput(uicamera, player)
         camera.setToOrtho(false, MapCFG.VIEWPORTWIDTH.toFloat(), MapCFG.VIEWPORTHEIGHT.toFloat())
@@ -98,7 +97,7 @@ class GameScreen(val game: Main) : Screen {
             )
             deltatime = 0.0f
 
-            game.screen = (GameScreen(game))
+            game.screen = (GameScreen(game,player) )
 
         }
 

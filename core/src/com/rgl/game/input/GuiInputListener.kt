@@ -4,8 +4,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.input.GestureDetector.GestureListener
 import com.badlogic.gdx.math.Vector2
 import com.rgl.game.gui.Inventory
+import com.rgl.game.world.MapCFG
+import com.rgl.game.world.game_objects.drawable.player.Player
+import com.rgl.game.world.level.Tile
 
-class GuiInputListener (camera:OrthographicCamera):GestureListener {
+class GuiInputListener (var camera:OrthographicCamera, var player: Player):GestureListener {
 
     override fun touchDown(x: Float, y: Float, pointer: Int, button: Int): Boolean {
         if(Inventory.isDrawable)return true
@@ -14,9 +17,26 @@ class GuiInputListener (camera:OrthographicCamera):GestureListener {
 
     override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
         if(Inventory.isDrawable){
-
-
-
+            for (i in 0..1){
+                for (j in 0..<Inventory.getInventory()[0].size){
+                    if (Inventory.getInventory()[i][j]!=null) {
+                        if (x>Inventory.getInventory()[i][j]!!.renderPos.x&& x<Inventory.getInventory()[i][j]!!.renderPos.x+ MapCFG.ITEM_INVENTORY_WIDTH &&
+                            MapCFG.VIEWPORTHEIGHT-y>Inventory.getInventory()[i][j]!!.renderPos.y&& MapCFG.VIEWPORTHEIGHT-y<Inventory.getInventory()[i][j]!!.renderPos.y+ MapCFG.ITEM_INVENTORY_HEIGHT)
+                        {
+                            if(Inventory.selected==null) {
+                                Inventory.selected = Tile.Index(i, j)
+                            } else {
+                                if(Inventory.selected!!.x==i && Inventory.selected!!.y==j){
+                                    player.equip(Inventory.getInventory()[i][j]!!)
+                                    Inventory.selected=null
+                                }else{
+                                    Inventory.selected = Tile.Index(i, j)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
 
 

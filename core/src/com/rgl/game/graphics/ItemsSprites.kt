@@ -26,8 +26,22 @@ enum class ItemsSprites(var id: Byte) {
     POT2(22),
     POT3(23),
     POT4(24),
-    SCROLL(25);
-
+    SCROLL(25),
+    SWORD_TINT1(26),
+    SWORD_TINT2(27),
+    SWORD_TINT3(28),
+    AXE_TINT1(29),
+    AXE_TINT2(30),
+    AXE_TINT3(31),
+    MACE_TINT1(32),
+    MACE_TINT2(33),
+    MACE_TINT3(34),
+    ARMOR_TINT1(35),
+    ARMOR_TINT2(36),
+    ARMOR_TINT3(37),
+    BOOTS_TINT1(38),
+    BOOTS_TINT2(39),
+    BOOTS_TINT3(40);
     companion object {
         val listOfSwords: Set<Byte> = setOf(1, 2, 3)
         val listOfAxes: Set<Byte> = setOf(4, 5, 6)

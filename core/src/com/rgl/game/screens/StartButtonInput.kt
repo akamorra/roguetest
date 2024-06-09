@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector3
 import com.rgl.game.gui.NewGameButton
 import com.rgl.game.world.MapCFG
 import com.rgl.game.world.World
+import com.rgl.game.world.game_objects.drawable.player.Player
 
 class StartButtonInput(var camera: OrthographicCamera, var screen: MainMenu):GestureListener {
     var tempV3:Vector3 = Vector3(0.0f,0.0f,0.0f)
@@ -21,7 +22,7 @@ class StartButtonInput(var camera: OrthographicCamera, var screen: MainMenu):Ges
         if (x>NewGameButton.renderPos.x&& x<NewGameButton.renderPos.x+MapCFG.START_GUI_WIDTH*MapCFG.START_GUI_SCALE&&
             MapCFG.VIEWPORTHEIGHT-y>NewGameButton.renderPos.y && MapCFG.VIEWPORTHEIGHT-y<NewGameButton.renderPos.y+MapCFG.START_GUI_HEIGTH*MapCFG.START_GUI_SCALE){
             World.clear()
-            screen.game.screen = GameScreen(screen.game)
+            screen.game.screen = GameScreen(screen.game, Player())
             screen.game.dispose()
             return true
         }

@@ -5,5 +5,6 @@ enum class GuiName(val _name:String) {
     INVENTORY("inventory"),
     HEALTH_BAR("hpbar"),
     START_BUTTON("startbutton"),
-    SKIP_BUTTON("skipbutton")
+    SKIP_BUTTON("skipbutton"),
+    INVENTORY_BUTTON("inventorybutton")
 }

@@ -20,9 +20,9 @@ class Ork(player: Player, lvl: Level) : Monster(player, lvl) {
         walkTexture = MonsterSprites.GOBLIN_WALK2.id
         idleTexture = MonsterSprites.GOBLIN_IDLE1.id
         AttackTexture = MonsterSprites.GOBLIN_IDLE2.id
-        HP = Random.nextInt(9, 16)
-        ARMOR = 0
-        ATTACK = Random.nextInt(3, 9 + player.ARMOR)
+        HP = Random.nextInt(9, 16+player.TOTAL_HP/4)
+        ARMOR = Random.nextInt(1, 3+player.ATTACK/4)
+        ATTACK = Random.nextInt(3, 9+player.ARMOR/3)
         reward = HP
         TOTAL_HP = HP
         stateMachine.setState(PlayersStates.IDLE, this)

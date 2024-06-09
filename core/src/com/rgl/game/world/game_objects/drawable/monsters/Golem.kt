@@ -18,8 +18,8 @@ class Golem(player: Player, lvl: Level):Monster(player, lvl) {
         walkTexture = MonsterSprites.GOLEM_WALK2.id
         idleTexture = MonsterSprites.GOLEM_IDLE1.id
         AttackTexture = MonsterSprites.GOLEM_IDLE3.id
-        HP = Random.nextInt(19, 36)
-        ARMOR = 0
+        HP = Random.nextInt(19, 36+player.TOTAL_HP/2)
+        ARMOR = Random.nextInt(1, 3+player.ATTACK/2)
         ATTACK = Random.nextInt(10, 14+player.ARMOR)
         reward = HP
         TOTAL_HP=HP

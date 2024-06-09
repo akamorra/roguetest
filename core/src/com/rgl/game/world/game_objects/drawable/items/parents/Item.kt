@@ -1,12 +1,15 @@
 package com.rgl.game.world.game_objects.drawable.items.parents
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.math.Vector2
+import com.rgl.game.graphics.Quality
 import com.rgl.game.graphics.TextureRepo
 import com.rgl.game.world.MapCFG.ITEM_INVENTORY_HEIGHT
 import com.rgl.game.world.MapCFG.ITEM_INVENTORY_WIDTH
 import com.rgl.game.world.MapCFG.ITEM_ONMAP_SIZE
 import com.rgl.game.world.game_objects.Drawable
+import com.rgl.game.world.game_objects.drawable.player.Player
 import com.rgl.game.world.level.Tile
 import java.util.UUID
 
@@ -14,14 +17,24 @@ open abstract class Item : ItemInterface, Drawable {
     override fun render(batch: Batch, x: Float, y: Float) {
         batch.draw(TextureRepo.getItemTexture(textureID),renderPos.x,renderPos.y,ITEM_ONMAP_SIZE,ITEM_ONMAP_SIZE)
     }
-    fun renderInv(batch: Batch, x: Float, y: Float) {
+    var tintTextureID:Byte = 0
+    var quality: Quality =Quality.SIMPLE
+    open fun renderInv(batch: Batch, x: Float, y: Float, player: Player) {
+        batch.setColor(Quality.getColor(quality));
+        batch.draw(TextureRepo.getItemTexture(tintTextureID),renderPos.x,renderPos.y,
+            ITEM_INVENTORY_WIDTH, ITEM_INVENTORY_HEIGHT)
+        if((player.checkRequirements(this)))batch.setColor(Color.WHITE)
+        else batch.setColor(Color.DARK_GRAY)
         batch.draw(TextureRepo.getItemTexture(textureID),renderPos.x,renderPos.y,
             ITEM_INVENTORY_WIDTH, ITEM_INVENTORY_HEIGHT)
+        batch.setColor(Color.WHITE)
     }
-
-    private val requiresStrength: Float = 0.0f
-    private val requiresAgility: Float = 0.0f
-    private val requiresLevel: Float = 0.0f
+    open fun getstatistics():MutableSet<Pair<ListOfStats,Int>>{
+        return mutableSetOf()
+    }
+    var requiresStrength: Float = 0.0f
+    var requiresAgility: Float = 0.0f
+    var requiresLevel: Int = 0
 
     override var isDrawable: Boolean = true
     override var isPickedUP: Boolean = false

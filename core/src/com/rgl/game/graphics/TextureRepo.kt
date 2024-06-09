@@ -55,7 +55,9 @@ object TextureRepo {
             TextureRegion(gui_texture,28,0,904,512),
             TextureRegion(gui_texture,32,832,128,32),
             TextureRegion(gui_texture,32,896,360,128),
-            TextureRegion(gui_texture,192,800,64,64)
+            TextureRegion(gui_texture,192,800,64,64),
+            TextureRegion(gui_texture,256,800,64,64),
+            TextureRegion(gui_texture,362,540,140,148)
         )
     )
 
@@ -90,10 +92,27 @@ object TextureRepo {
             TextureRegion(items_texture, TEXTURESIZE*9, TEXTURESIZE, TEXTURESIZE, TEXTURESIZE),
             TextureRegion(items_texture, TEXTURESIZE*9, TEXTURESIZE*2, TEXTURESIZE, TEXTURESIZE),
             TextureRegion(items_texture, TEXTURESIZE*9, TEXTURESIZE*3, TEXTURESIZE, TEXTURESIZE),
-
             TextureRegion(items_texture, 0, TEXTURESIZE*9, TEXTURESIZE, TEXTURESIZE),
 
+            TextureRegion(items_texture, TEXTURESIZE, TEXTURESIZE*3, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*2, TEXTURESIZE*3, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*3, TEXTURESIZE*3, TEXTURESIZE, TEXTURESIZE),
 
+            TextureRegion(items_texture, TEXTURESIZE, TEXTURESIZE*4, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*2, TEXTURESIZE*4, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*3, TEXTURESIZE*4, TEXTURESIZE, TEXTURESIZE),
+
+            TextureRegion(items_texture, TEXTURESIZE, TEXTURESIZE*5, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*2, TEXTURESIZE*5, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*3, TEXTURESIZE*5, TEXTURESIZE, TEXTURESIZE),
+
+            TextureRegion(items_texture, 0, TEXTURESIZE*7, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE, TEXTURESIZE*7, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*2, TEXTURESIZE*7, TEXTURESIZE, TEXTURESIZE),
+
+            TextureRegion(items_texture, TEXTURESIZE*3, TEXTURESIZE*7, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*4, TEXTURESIZE*7, TEXTURESIZE, TEXTURESIZE),
+            TextureRegion(items_texture, TEXTURESIZE*5, TEXTURESIZE*7, TEXTURESIZE, TEXTURESIZE),
         )
     )
 
@@ -162,6 +181,8 @@ object TextureRepo {
             GuiName.HEALTH_BAR._name -> gui_region[2]
             GuiName.START_BUTTON._name -> gui_region[3]
             GuiName.SKIP_BUTTON._name -> gui_region[4]
+            GuiName.INVENTORY_BUTTON._name-> gui_region[5]
+            "selected" -> gui_region[6]
             else -> gui_region[0]
         }
 
@@ -226,6 +247,21 @@ object TextureRepo {
             ItemsSprites.POT3.id -> items_region[22]
             ItemsSprites.POT4.id -> items_region[23]
             ItemsSprites.SCROLL.id -> items_region[24]
-            else -> atlasRegion[8]
+            ItemsSprites.SWORD_TINT1.id -> items_region[25]
+            ItemsSprites.SWORD_TINT2.id -> items_region[26]
+            ItemsSprites.SWORD_TINT3.id -> items_region[27]
+            ItemsSprites.MACE_TINT1.id -> items_region[28]
+            ItemsSprites.MACE_TINT2.id -> items_region[29]
+            ItemsSprites.MACE_TINT3.id -> items_region[30]
+            ItemsSprites.AXE_TINT1.id -> items_region[31]
+            ItemsSprites.AXE_TINT2.id -> items_region[32]
+            ItemsSprites.AXE_TINT3.id -> items_region[33]
+            ItemsSprites.ARMOR_TINT1.id -> items_region[34]
+            ItemsSprites.ARMOR_TINT2.id -> items_region[35]
+            ItemsSprites.ARMOR_TINT3.id -> items_region[36]
+            ItemsSprites.BOOTS_TINT1.id -> items_region[37]
+            ItemsSprites.BOOTS_TINT2.id -> items_region[38]
+            ItemsSprites.BOOTS_TINT3.id -> items_region[39]
+            else -> getMonsterTexture(id)
         }
 }

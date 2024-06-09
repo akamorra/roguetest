@@ -17,7 +17,7 @@ object InventoryButton {
         renderPos =
             Vector2(tempV3.x+ MapCFG.INVENTORY_GUI_WIDTH-180,0.0f+tempV3.y+50)
         batch.draw(
-            TextureRepo.getGui("skipbutton"), renderPos.x, renderPos.y,
+            TextureRepo.getGui("inventorybutton"), renderPos.x, renderPos.y,
             MapCFG.SKIP_GUI_WIDTH * MapCFG.SKIP_GUI_SCALE,
             MapCFG.SKIP_GUI_HEIGTH * MapCFG.SKIP_GUI_SCALE
         )

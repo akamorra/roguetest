@@ -1,5 +1,6 @@
 package com.rgl.game.world.game_objects.drawable.monsters
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -26,8 +27,10 @@ import kotlin.random.Random
 
 open class Monster(var player: Player, var lvl: Level) : Observer, Drawable, HasArmor, HasAttack, HasHP {
     override var HP = 0
+    private var timer:Float = Gdx.graphics.deltaTime
     override var ARMOR = 0
     override var ATTACK = 0
+    private var attacked:Boolean =false
     var isdead = false
      var waiting:Boolean=false
     var index: Tile.Index = Tile.Index(0, 0) //current tile player is at
@@ -92,6 +95,15 @@ open class Monster(var player: Player, var lvl: Level) : Observer, Drawable, Has
     }
 
     override fun render(batch: Batch, x: Float, y: Float) {
+        if(attacked&&timer<0.2f){
+            batch.setColor(Color.RED)
+            timer+=Gdx.graphics.deltaTime
+        }
+        if(timer>=0.2f){
+            batch.setColor(Color.WHITE)
+            timer=0.0f
+            attacked=false
+        }
         batch.draw(
             TextureRepo.getMonsterTexture(textureID),
             renderPos.x,
@@ -99,6 +111,7 @@ open class Monster(var player: Player, var lvl: Level) : Observer, Drawable, Has
             MONSTER_WIDTH,
             MONSTER_HEIGHT
         )
+        batch.setColor(Color.WHITE)
         batch.draw(TextureRepo.getGui("hpbar"),getCenter().x-64,getCenter().y+ MONSTER_HEIGHT -56,128.0f,32.0f)
         font.color = Color.ORANGE
         font.data.setScale(1.7f, 1.7f)
@@ -181,6 +194,7 @@ open class Monster(var player: Player, var lvl: Level) : Observer, Drawable, Has
     }
 
     fun getAttacked(player: Player) {
+        attacked=true
         this.HP -= player.ATTACK
         if (this.HP <= 0) {
             player.achieveExp(this)
@@ -190,7 +204,13 @@ open class Monster(var player: Player, var lvl: Level) : Observer, Drawable, Has
 
         }
     }
-
+    override fun toString(): String {
+        return  "\nUUID:"+key+"\n RenderPos: ("+renderPos.x+";"+renderPos.y+")\n"+"At Tile: ("+index.x+";"+index.y+")"+
+                "\nCurrentHP: "+HP+"/"+TOTAL_HP+
+                "\nATTACK: "+ATTACK+
+                "\nARMOR: "+ARMOR+
+                "\nReward Exp:"+reward
+    }
     override fun turn() {
         update()
         update()
